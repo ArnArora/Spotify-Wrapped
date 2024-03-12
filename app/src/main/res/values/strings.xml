@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Spotify-Wrapped</string>
+    <string name="sign_in">Sign in</string>
+    <string name="username">Username</string>
+    <string name="password">password\n</string>
+    <string name="Password">Password</string>
+    <string name="forgot_password">Forgot Password</string>
+    <string name="LOGIN">LOGIN</string>
 </resources>
