@@ -6,4 +6,10 @@
     <string name="Password">Password</string>
     <string name="forgot_password">Forgot Password</string>
     <string name="LOGIN">LOGIN</string>
+    <string name="home_page">Home Page</string>
+    <string name="see_my_wrapped">See My Wrapped</string>
+    <string name="is_it_a_holiday">Is it a holiday?</string>
+    <string name="share_with_friends">Share with friends!</string>
+    <string name="reccomendations">Reccomendations</string>
+    <string name="recommendations">Recommendations</string>
 </resources>
