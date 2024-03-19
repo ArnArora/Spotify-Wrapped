@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/heart_background"
+    tools:context=".HomePage">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/happy_valentines_day"
+        android:textColor="@color/black"
+        android:textSize="35dp"
+        android:layout_margin="50dp"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:id="@+id/ValentinesDay"
+        tools:ignore="SpUsage" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/Home"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ValentinesDay"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="2dp"
+        android:layout_centerHorizontal="true"
+        android:backgroundTint="#30ffffff"
+        android:text= "@string/home_page"
+        android:textColor="@color/black" />
+
+    <TextView
+        android:id="@+id/valText1"
+        android:layout_below="@id/Home"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="TextView" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/next"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/valText1"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="2dp"
+        android:layout_centerHorizontal="true"
+        android:backgroundTint="#30ffffff"
+        android:text= "@string/Next"
+        android:textColor="@color/black" />
+
+
+</RelativeLayout>

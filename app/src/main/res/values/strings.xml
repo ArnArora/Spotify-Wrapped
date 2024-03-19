@@ -23,5 +23,7 @@
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
+    <string name="happy_valentines_day">Happy Valentines Day!</string>
+    <string name="Next">Next</string>
 
 </resources>

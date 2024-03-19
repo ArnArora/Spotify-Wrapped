@@ -40,7 +40,7 @@ public class SpotifyAPI extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.spotifylayout);
+        setContentView(R.layout.tutorial_spotify_layout);
 
         // Initialize the views
         tokenTextView = (TextView) findViewById(R.id.token_text_view);
