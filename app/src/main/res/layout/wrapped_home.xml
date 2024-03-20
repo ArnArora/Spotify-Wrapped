@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.home.HomeFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/text_welcome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:textAlignment="center"
+            android:text="Your Spotify Wrapped - Enjoy!"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/text_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_welcome"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:textAlignment="center"
+            android:text="Your top genres"
+            android:textSize="16sp" />
+
+        <!-- Linear layout with 5 rectangles -->
+        <LinearLayout
+            android:id="@+id/top_genres"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:layout_below="@id/text_description"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical">
+
+            <!-- Rectangles representing top genres -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:background="#FF0000" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_weight="0.9"
+                android:background="#00FF00" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_weight="0.7"
+                android:background="#0000FF" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_weight="0.5"
+                android:background="#FFFF00" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.3"
+                android:background="#FF00FF" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/top_songs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/top_genres"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:textAlignment="center"
+            android:text="Listen to your top tracks"
+            android:textSize="16sp" />
+
+        <!-- GridLayout with 9 boxes -->
+        <GridLayout
+            android:id="@+id/top_tracks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/top_songs"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            android:columnCount="3"
+            android:orientation="horizontal">
+
+            <!-- Boxes representing top tracks -->
+            <View
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_margin="20dp"
+                android:layout_gravity="center"
+                android:background="#FF0000" />
+
+            <View
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_margin="20dp"
+                android:layout_gravity="center"
+                android:background="#00FF00" />
+
+            <View
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_margin="20dp"
+                android:layout_gravity="center"
+                android:background="#0000FF" />
+
+            <View
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_margin="20dp"
+                android:layout_gravity="center"
+                android:background="#FFFF00" />
+
+            <View
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_margin="20dp"
+                android:layout_gravity="center"
+                android:background="#FF00FF" />
+
+            <View
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_margin="20dp"
+                android:layout_gravity="center"
+                android:background="#FF5733" />
+
+            <View
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_margin="20dp"
+                android:layout_gravity="center"
+                android:background="#C70039" />
+
+            <View
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_margin="20dp"
+                android:layout_gravity="center"
+                android:background="#900C3F" />
+
+            <View
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_margin="20dp"
+                android:background="#581845" />
+        </GridLayout>
+
+        <!-- LinearLayout with ViewPager for top artists -->
+        <LinearLayout
+            android:id="@+id/top_artists"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/top_tracks">
+
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="100dp" />
+        </LinearLayout>
+
+    </RelativeLayout>
+</ScrollView>
