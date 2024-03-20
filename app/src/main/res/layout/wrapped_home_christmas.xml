@@ -11,7 +11,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background = "@drawable/green">
+        android:background = "@drawable/winter">
 
 
         <TextView
@@ -24,7 +24,7 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:textAlignment="center"
-            android:text="Your Spotify Wrapped - Enjoy!"
+            android:text="Your Spotify Wrapped - Merry Christmas!"
             android:textSize="20sp" />
 
         <TextView
