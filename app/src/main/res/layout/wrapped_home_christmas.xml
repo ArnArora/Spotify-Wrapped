@@ -24,6 +24,7 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:textAlignment="center"
+            android:background="#30ffffff"
             android:text="Your Spotify Wrapped - Merry Christmas!"
             android:textSize="20sp" />
 
@@ -36,6 +37,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:textAlignment="center"
+            android:background="#30ffffff"
             android:text="Your top genres"
             android:textSize="16sp" />
 
@@ -90,6 +92,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:textAlignment="center"
+            android:background="#30ffffff"
             android:text="Listen to your top tracks"
             android:textSize="16sp" />
 
