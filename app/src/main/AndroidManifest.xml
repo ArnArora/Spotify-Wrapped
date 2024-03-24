@@ -21,6 +21,8 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+
+                <data android:host="auth" android:scheme="SPOTIFY-SDK"/>
             </intent-filter>
 
         </activity>
@@ -36,9 +38,4 @@
             <category android:name="android.intent.category.BROWSABLE" />
             <data
                 android:host="auth"
-                android:scheme="wrapped_app" />
-        </intent-filter>
-        </activity>
-    </application>
-
-</manifest>
+               
