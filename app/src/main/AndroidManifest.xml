@@ -33,7 +33,7 @@
             <category android:name="android.intent.category.BROWSABLE" />
             <data
                 android:host="auth"
-                android:scheme="wrapped_app" />
+                android:scheme="wrapped-app" />
         </intent-filter>
         </activity>
         <activity

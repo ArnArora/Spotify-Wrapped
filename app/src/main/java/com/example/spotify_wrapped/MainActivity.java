@@ -51,10 +51,6 @@ public class MainActivity extends AppCompatActivity {
     public void getToken() {
         final AuthorizationRequest request = getAuthenticationRequest(AuthorizationResponse.Type.TOKEN);
         AuthorizationClient.openLoginActivity(MainActivity.this, AUTH_TOKEN_REQUEST_CODE, request);
-//        Intent intent = new Intent(this, HomePage.class);
-//        intent.putExtra("Token", mAccessToken);
-        Log.d("TOKEN", mAccessToken);
-//        startActivity(intent);
     }
 
     public void getCode() {
@@ -70,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
         // Check which request code is present (if any)
         if (AUTH_TOKEN_REQUEST_CODE == requestCode) {
             mAccessToken = response.getAccessToken();
-
         } else if (AUTH_CODE_REQUEST_CODE == requestCode) {
             mAccessCode = response.getCode();
         }
