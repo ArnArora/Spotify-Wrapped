@@ -14,22 +14,17 @@
         tools:targetApi="31">
         <activity
             android:name=".MainActivity2"
-            android:exported="true"
+            android:exported="false"
             android:label="@string/title_activity_main2"
-            android:theme="@style/Theme.SpotifyWrapped.NoActionBar">
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-
-                <data android:host="auth" android:scheme="SPOTIFY-SDK"/>
-            </intent-filter>
-
-        </activity>
+            android:theme="@style/Theme.SpotifyWrapped.NoActionBar" />
         <!-- MainActivity -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
 
         <!-- Specify Redirect URI -->
         <intent-filter>
@@ -38,4 +33,12 @@
             <category android:name="android.intent.category.BROWSABLE" />
             <data
                 android:host="auth"
-               
+                android:scheme="wrapped-app" />
+        </intent-filter>
+        </activity>
+        <activity
+            android:name=".HomePage"
+            android:exported="true" />
+    </application>
+
+</manifest>
