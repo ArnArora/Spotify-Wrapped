@@ -171,6 +171,13 @@
                 android:background="#581845" />
         </GridLayout>
 
+        <Button
+            android:id="@+id/captureButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below = "@id/top_tracks"
+            android:text = "Capture and Share">
+        </Button>
         <!-- LinearLayout with ViewPager for top artists -->
         <LinearLayout
             android:id="@+id/top_artists"
