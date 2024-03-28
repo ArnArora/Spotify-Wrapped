@@ -80,5 +80,15 @@
 
         />
 
+    <TextView
+        android:id="@+id/tokenView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/imageView5"
+        android:layout_alignBottom="@+id/imageView5"
+        android:layout_marginEnd="-72dp"
+        android:layout_marginBottom="175dp"
+        android:text="Access Token" />
+
 
 </RelativeLayout>
