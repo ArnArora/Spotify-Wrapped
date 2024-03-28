@@ -14,8 +14,7 @@
         tools:targetApi="31">
         <activity
             android:name=".MainActivity2"
-            android:exported="false"
-            android:label="@string/title_activity_main2"
+            android:exported="true"
             android:theme="@style/Theme.SpotifyWrapped.NoActionBar" />
         <!-- MainActivity -->
         <activity
@@ -33,6 +32,9 @@
                 android:scheme="com.example.spotifywrapped" />
         </intent-filter>
         </activity>
+        <activity
+            android:name=".HomePage"
+            android:exported="true" />
     </application>
 
 </manifest>

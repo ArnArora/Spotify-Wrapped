@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         // Check which request code is present (if any)
         if (AUTH_TOKEN_REQUEST_CODE == requestCode) {
             mAccessToken = response.getAccessToken();
-            Intent intent = new Intent(this, MainActivity2.class);
+            Intent intent = new Intent(this, HomePage.class);
             intent.putExtra("access-token", mAccessToken);
             startActivity(intent);
         } else if (AUTH_CODE_REQUEST_CODE == requestCode) {
