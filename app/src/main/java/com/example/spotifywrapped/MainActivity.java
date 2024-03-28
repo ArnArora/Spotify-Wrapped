@@ -32,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
     public static final String CLIENT_ID = "3b801cbc275249a6be39b9ac60b47962";
     public static final String REDIRECT_URI = "com.example.spotifywrapped://auth";
 
+    public static final String[] scopes = {"user-read-email"};
+
     public static final int AUTH_TOKEN_REQUEST_CODE = 0;
     public static final int AUTH_CODE_REQUEST_CODE = 1;
 
@@ -76,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         // Check which request code is present (if any)
         if (AUTH_TOKEN_REQUEST_CODE == requestCode) {
             mAccessToken = response.getAccessToken();
-            Intent intent = new Intent(this, HomePage.class);
+            Intent intent = new Intent(this, MainActivity2.class);
             intent.putExtra("access-token", mAccessToken);
             startActivity(intent);
         } else if (AUTH_CODE_REQUEST_CODE == requestCode) {
@@ -93,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
     private AuthorizationRequest getAuthenticationRequest(AuthorizationResponse.Type type) {
         return new AuthorizationRequest.Builder(CLIENT_ID, type, getRedirectUri().toString())
                 .setShowDialog(false)
-                .setScopes(new String[] {"user-read-email" }) // <--- Change the scope of your requested token here
+                .setScopes(scopes)
                 .setCampaign("your-campaign-token")
                 .build();
     }

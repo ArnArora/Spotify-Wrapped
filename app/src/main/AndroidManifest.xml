@@ -33,9 +33,6 @@
                 android:scheme="com.example.spotifywrapped" />
         </intent-filter>
         </activity>
-        <activity
-            android:name=".HomePage"
-            android:exported="true" />
     </application>
 
 </manifest>
