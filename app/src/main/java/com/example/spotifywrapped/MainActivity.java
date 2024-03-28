@@ -1,23 +1,9 @@
-package com.example.spotify_wrapped.ui.recommendations;
-
-import androidx.lifecycle.ViewModelProvider;
-
-import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import com.example.spotify_wrapped.MainActivity;
-import com.example.spotify_wrapped.MainActivity2;
-import com.example.spotify_wrapped.R;
+package com.example.spotifywrapped;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
@@ -25,7 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.spotify_wrapped.databinding.FragmentRecsBinding;
+import com.example.spotifywrapped.databinding.SignInBinding;
 import com.spotify.sdk.android.auth.AuthorizationClient;
 import com.spotify.sdk.android.auth.AuthorizationRequest;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
@@ -34,7 +20,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.Objects;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -42,12 +27,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class RecsFragment extends Fragment {
+public class MainActivity extends AppCompatActivity {
 
-    private RecsViewModel mViewModel;
-
-    public static final String CLIENT_ID = "e491319d4b474c5ea52ce46ced1edad1";
-    public static final String REDIRECT_URI = "SPOTIFY-SDK://auth";
+    public static final String CLIENT_ID = "3b801cbc275249a6be39b9ac60b47962";
+    public static final String REDIRECT_URI = "com.example.spotifywrapped://auth";
 
     public static final int AUTH_TOKEN_REQUEST_CODE = 0;
     public static final int AUTH_CODE_REQUEST_CODE = 1;
@@ -55,48 +38,23 @@ public class RecsFragment extends Fragment {
     private final OkHttpClient mOkHttpClient = new OkHttpClient();
     private String mAccessToken, mAccessCode;
     private Call mCall;
-
-    private TextView tokenTextView, codeTextView, profileTextView;
-
-    private FragmentRecsBinding binding;
-
-    public static RecsFragment newInstance() {
-        return new RecsFragment();
-    }
+    private SignInBinding binding;
+    private TextView tokenTextView;
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        //return inflater.inflate(R.layout.fragment_recs, container, false);
-        binding = FragmentRecsBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-        mViewModel = new ViewModelProvider(this).get(RecsViewModel.class);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        binding = SignInBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         // Initialize the views
-        tokenTextView = binding.tokenTextView;
-        codeTextView = binding.codeTextView;
-        profileTextView = binding.responseTextView;
-
+        tokenTextView = binding.tokenView;
         // Initialize the buttons
-        Button tokenBtn = binding.tokenBtn;
-        Button codeBtn = binding.codeBtn;
-        Button profileBtn = binding.profileBtn;
-
-        // Set the click listeners for the buttons
-
-        tokenBtn.setOnClickListener((v) -> {
+        Button loginButton = binding.loginButton;
+        tokenTextView.setText("Access Token");
+        loginButton.setOnClickListener((v) -> {
             getToken();
         });
-
-        codeBtn.setOnClickListener((v) -> {
-            getCode();
-        });
-
-        profileBtn.setOnClickListener((v) -> {
-            onGetUserProfileClicked();
-        });
-
-        return root;
     }
 
     /**
@@ -107,7 +65,7 @@ public class RecsFragment extends Fragment {
      */
     public void getToken() {
         final AuthorizationRequest request = getAuthenticationRequest(AuthorizationResponse.Type.TOKEN);
-        AuthorizationClient.openLoginActivity(requireActivity(), AUTH_TOKEN_REQUEST_CODE, request);
+        AuthorizationClient.openLoginActivity(MainActivity.this, AUTH_TOKEN_REQUEST_CODE, request);
     }
 
     /**
@@ -118,15 +76,16 @@ public class RecsFragment extends Fragment {
      */
     public void getCode() {
         final AuthorizationRequest request = getAuthenticationRequest(AuthorizationResponse.Type.CODE);
-        AuthorizationClient.openLoginActivity(requireActivity(), AUTH_CODE_REQUEST_CODE, request);
+        AuthorizationClient.openLoginActivity(MainActivity.this, AUTH_CODE_REQUEST_CODE, request);
     }
+
 
     /**
      * When the app leaves this activity to momentarily get a token/code, this function
      * fetches the result of that external activity to get the response from Spotify
      */
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         final AuthorizationResponse response = AuthorizationClient.getResponse(resultCode, data);
 
@@ -137,19 +96,50 @@ public class RecsFragment extends Fragment {
 
         } else if (AUTH_CODE_REQUEST_CODE == requestCode) {
             mAccessCode = response.getCode();
-            setTextAsync(mAccessCode, codeTextView);
         }
     }
 
+    public void getUserProfile() {
+        final Request request = new Request.Builder()
+                .url("https://api.spotify.com/v1/me")
+                .addHeader("Authorization", "Bearer " + mAccessToken)
+                .build();
+
+        cancelCall();
+        mCall = mOkHttpClient.newCall(request);
+        mCall.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("HTTP", "Failed to fetch data: " + e);
+                Toast.makeText(MainActivity.this, "Failed to fetch data, watch Logcat for more details",
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    final JSONObject jsonObject = new JSONObject(response.body().string());
+                    String name = jsonObject.getString("display_name");
+                    setTextAsync("Welcome " + name, tokenTextView);
+                } catch (JSONException e) {
+                    Log.d("JSON", "Failed to parse data: " + e);
+                }
+            }
+        });
+    }
+    /**
+     * Get user profile
+     * This method will get the user profile using the token
+     */
     public void onGetUserProfileClicked() {
         if (mAccessToken == null) {
-            Toast.makeText(requireActivity(), "You need to get an access token first!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "You need to get an access token first!", Toast.LENGTH_SHORT).show();
             return;
         }
 
         // Create a request to get the user profile
         final Request request = new Request.Builder()
-                .url("https://api.spotify.com/v1/recommendations?seed_artists=4NHQUGzhtTLFvgF5SZesLK&seed_genres=classical%2Ccountry&seed_tracks=0c6xIDDpzE81m2q797ordA")
+                .url("https://api.spotify.com/v1/me")
                 .addHeader("Authorization", "Bearer " + mAccessToken)
                 .build();
 
@@ -160,7 +150,7 @@ public class RecsFragment extends Fragment {
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.d("HTTP", "Failed to fetch data: " + e);
-                Toast.makeText(requireActivity(), "Failed to fetch data, watch Logcat for more details",
+                Toast.makeText(MainActivity.this, "Failed to fetch data, watch Logcat for more details",
                         Toast.LENGTH_SHORT).show();
             }
 
@@ -168,10 +158,10 @@ public class RecsFragment extends Fragment {
             public void onResponse(Call call, Response response) throws IOException {
                 try {
                     final JSONObject jsonObject = new JSONObject(response.body().string());
-                    setTextAsync(jsonObject.toString(3), profileTextView);
+                    setTextAsync(jsonObject.toString(3), tokenTextView);
                 } catch (JSONException e) {
                     Log.d("JSON", "Failed to parse data: " + e);
-                    Toast.makeText(requireActivity(), "Failed to parse data, watch Logcat for more details",
+                    Toast.makeText(MainActivity.this, "Failed to parse data, watch Logcat for more details",
                             Toast.LENGTH_SHORT).show();
                 }
             }
@@ -186,7 +176,7 @@ public class RecsFragment extends Fragment {
      * @param textView TextView object to update
      */
     private void setTextAsync(final String text, TextView textView) {
-        requireActivity().runOnUiThread(() -> textView.setText(text));
+        runOnUiThread(() -> textView.setText(text));
     }
 
     /**
@@ -198,11 +188,9 @@ public class RecsFragment extends Fragment {
     private AuthorizationRequest getAuthenticationRequest(AuthorizationResponse.Type type) {
         return new AuthorizationRequest.Builder(CLIENT_ID, type, getRedirectUri().toString())
                 .setShowDialog(false)
+                .setScopes(new String[] {"user-read-email" }) // <--- Change the scope of your requested token here
                 .setCampaign("your-campaign-token")
                 .build();
-
-        //.setScopes(new String[] { "user-read-email" }) // <--- Change the scope of your requested token here
-
     }
 
     /**
@@ -221,16 +209,8 @@ public class RecsFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
+    protected void onDestroy() {
         cancelCall();
         super.onDestroy();
     }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(RecsViewModel.class);
-        // TODO: Use the ViewModel
-    }
-
 }

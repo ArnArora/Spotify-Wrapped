@@ -1,4 +1,4 @@
-package com.example.spotify_wrapped.ui.recommendations;
+package com.example.spotifywrapped.ui.recommendations;
 
 import androidx.lifecycle.ViewModel;
 

@@ -1,6 +1,5 @@
-package com.example.spotify_wrapped.ui.home;
+package com.example.spotifywrapped.ui.home;
 
-import static com.example.spotify_wrapped.MainActivity.REDIRECT_URI;
 import static com.spotify.sdk.android.auth.LoginActivity.REQUEST_CODE;
 
 import android.content.Intent;
@@ -14,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.spotify_wrapped.databinding.FragmentHomeBinding;
+import com.example.spotifywrapped.databinding.FragmentHomeBinding;
 import com.spotify.sdk.android.auth.AuthorizationClient;
 import com.spotify.sdk.android.auth.AuthorizationRequest;
 import com.spotify.sdk.android.auth.AuthorizationResponse;

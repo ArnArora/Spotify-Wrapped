@@ -7,25 +7,25 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.example.spotify_wrapped.ui.home.HomeFragment"
+        android:name="com.example.spotifywrapped.ui.home.HomeFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/nav_mywrapped"
-        android:name="com.example.spotify_wrapped.ui.wrapped.WrappedFragment"
+        android:name="com.example.spotifywrapped.ui.wrapped.WrappedFragment"
         android:label="@string/menu_wrapped"
         tools:layout="@layout/fragment_wrapped" />
 
     <fragment
         android:id="@+id/nav_holiday"
-        android:name="com.example.spotify_wrapped.ui.holiday.HolidayFragment"
+        android:name="com.example.spotifywrapped.ui.holiday.HolidayFragment"
         android:label="@string/menu_holiday"
         tools:layout="@layout/fragment_holiday" />
 
     <fragment
         android:id="@+id/nav_recommendations"
-        android:name="com.example.spotify_wrapped.ui.recommendations.RecsFragment"
+        android:name="com.example.spotifywrapped.ui.recommendations.RecsFragment"
         android:label="@string/recommendations_text"
         tools:layout="@layout/fragment_recs" />
 </navigation>

@@ -33,7 +33,7 @@
             <category android:name="android.intent.category.BROWSABLE" />
             <data
                 android:host="auth"
-                android:scheme="wrapped-app" />
+                android:scheme="com.example.spotifywrapped" />
         </intent-filter>
         </activity>
         <activity

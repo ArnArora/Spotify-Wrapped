@@ -1,4 +1,4 @@
-package com.example.spotify_wrapped.ui.holiday;
+package com.example.spotifywrapped.ui.holiday;
 
 import androidx.lifecycle.ViewModelProvider;
 
@@ -12,7 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.spotify_wrapped.R;
+import com.example.spotifywrapped.R;
 
 public class HolidayFragment extends Fragment {
 

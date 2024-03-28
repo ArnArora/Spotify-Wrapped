@@ -1,4 +1,4 @@
-package com.example.spotify_wrapped.ui.home;
+package com.example.spotifywrapped.ui.home;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

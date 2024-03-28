@@ -1,11 +1,17 @@
-package com.example.spotify_wrapped;
+package com.example.spotifywrapped.ui.recommendations;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
 
-import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
@@ -13,7 +19,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.spotify_wrapped.databinding.SignInBinding;
+import com.example.spotifywrapped.databinding.FragmentRecsBinding;
 import com.spotify.sdk.android.auth.AuthorizationClient;
 import com.spotify.sdk.android.auth.AuthorizationRequest;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
@@ -29,10 +35,12 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class RecsFragment extends Fragment {
 
-    public static final String CLIENT_ID = "3b801cbc275249a6be39b9ac60b47962";
-    public static final String REDIRECT_URI = "wrapped-app://auth";
+    private RecsViewModel mViewModel;
+
+    public static final String CLIENT_ID = "e491319d4b474c5ea52ce46ced1edad1";
+    public static final String REDIRECT_URI = "SPOTIFY-SDK://auth";
 
     public static final int AUTH_TOKEN_REQUEST_CODE = 0;
     public static final int AUTH_CODE_REQUEST_CODE = 1;
@@ -40,23 +48,48 @@ public class MainActivity extends AppCompatActivity {
     private final OkHttpClient mOkHttpClient = new OkHttpClient();
     private String mAccessToken, mAccessCode;
     private Call mCall;
-    private SignInBinding binding;
-    private TextView tokenTextView;
+
+    private TextView tokenTextView, codeTextView, profileTextView;
+
+    private FragmentRecsBinding binding;
+
+    public static RecsFragment newInstance() {
+        return new RecsFragment();
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        binding = SignInBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        //return inflater.inflate(R.layout.fragment_recs, container, false);
+        binding = FragmentRecsBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
+        mViewModel = new ViewModelProvider(this).get(RecsViewModel.class);
 
         // Initialize the views
-        tokenTextView = binding.tokenView;
+        tokenTextView = binding.tokenTextView;
+        codeTextView = binding.codeTextView;
+        profileTextView = binding.responseTextView;
+
         // Initialize the buttons
-        Button loginButton = binding.loginButton;
-        tokenTextView.setText("Access Token");
-        loginButton.setOnClickListener((v) -> {
+        Button tokenBtn = binding.tokenBtn;
+        Button codeBtn = binding.codeBtn;
+        Button profileBtn = binding.profileBtn;
+
+        // Set the click listeners for the buttons
+
+        tokenBtn.setOnClickListener((v) -> {
             getToken();
         });
+
+        codeBtn.setOnClickListener((v) -> {
+            getCode();
+        });
+
+        profileBtn.setOnClickListener((v) -> {
+            onGetUserProfileClicked();
+        });
+
+        return root;
     }
 
     /**
@@ -67,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
      */
     public void getToken() {
         final AuthorizationRequest request = getAuthenticationRequest(AuthorizationResponse.Type.TOKEN);
-        AuthorizationClient.openLoginActivity(MainActivity.this, AUTH_TOKEN_REQUEST_CODE, request);
+        AuthorizationClient.openLoginActivity(requireActivity(), AUTH_TOKEN_REQUEST_CODE, request);
     }
 
     /**
@@ -78,16 +111,15 @@ public class MainActivity extends AppCompatActivity {
      */
     public void getCode() {
         final AuthorizationRequest request = getAuthenticationRequest(AuthorizationResponse.Type.CODE);
-        AuthorizationClient.openLoginActivity(MainActivity.this, AUTH_CODE_REQUEST_CODE, request);
+        AuthorizationClient.openLoginActivity(requireActivity(), AUTH_CODE_REQUEST_CODE, request);
     }
-
 
     /**
      * When the app leaves this activity to momentarily get a token/code, this function
      * fetches the result of that external activity to get the response from Spotify
      */
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         final AuthorizationResponse response = AuthorizationClient.getResponse(resultCode, data);
 
@@ -98,50 +130,19 @@ public class MainActivity extends AppCompatActivity {
 
         } else if (AUTH_CODE_REQUEST_CODE == requestCode) {
             mAccessCode = response.getCode();
+            setTextAsync(mAccessCode, codeTextView);
         }
     }
 
-    public void getUserProfile() {
-        final Request request = new Request.Builder()
-                .url("https://api.spotify.com/v1/me")
-                .addHeader("Authorization", "Bearer " + mAccessToken)
-                .build();
-
-        cancelCall();
-        mCall = mOkHttpClient.newCall(request);
-        mCall.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.d("HTTP", "Failed to fetch data: " + e);
-                Toast.makeText(MainActivity.this, "Failed to fetch data, watch Logcat for more details",
-                        Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                try {
-                    final JSONObject jsonObject = new JSONObject(response.body().string());
-                    String name = jsonObject.getString("display_name");
-                    setTextAsync("Welcome " + name, tokenTextView);
-                } catch (JSONException e) {
-                    Log.d("JSON", "Failed to parse data: " + e);
-                }
-            }
-        });
-    }
-    /**
-     * Get user profile
-     * This method will get the user profile using the token
-     */
     public void onGetUserProfileClicked() {
         if (mAccessToken == null) {
-            Toast.makeText(this, "You need to get an access token first!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireActivity(), "You need to get an access token first!", Toast.LENGTH_SHORT).show();
             return;
         }
 
         // Create a request to get the user profile
         final Request request = new Request.Builder()
-                .url("https://api.spotify.com/v1/me")
+                .url("https://api.spotify.com/v1/recommendations?seed_artists=4NHQUGzhtTLFvgF5SZesLK&seed_genres=classical%2Ccountry&seed_tracks=0c6xIDDpzE81m2q797ordA")
                 .addHeader("Authorization", "Bearer " + mAccessToken)
                 .build();
 
@@ -152,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.d("HTTP", "Failed to fetch data: " + e);
-                Toast.makeText(MainActivity.this, "Failed to fetch data, watch Logcat for more details",
+                Toast.makeText(requireActivity(), "Failed to fetch data, watch Logcat for more details",
                         Toast.LENGTH_SHORT).show();
             }
 
@@ -160,10 +161,10 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 try {
                     final JSONObject jsonObject = new JSONObject(response.body().string());
-                    setTextAsync(jsonObject.toString(3), tokenTextView);
+                    setTextAsync(jsonObject.toString(3), profileTextView);
                 } catch (JSONException e) {
                     Log.d("JSON", "Failed to parse data: " + e);
-                    Toast.makeText(MainActivity.this, "Failed to parse data, watch Logcat for more details",
+                    Toast.makeText(requireActivity(), "Failed to parse data, watch Logcat for more details",
                             Toast.LENGTH_SHORT).show();
                 }
             }
@@ -178,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
      * @param textView TextView object to update
      */
     private void setTextAsync(final String text, TextView textView) {
-        runOnUiThread(() -> textView.setText(text));
+        requireActivity().runOnUiThread(() -> textView.setText(text));
     }
 
     /**
@@ -190,9 +191,11 @@ public class MainActivity extends AppCompatActivity {
     private AuthorizationRequest getAuthenticationRequest(AuthorizationResponse.Type type) {
         return new AuthorizationRequest.Builder(CLIENT_ID, type, getRedirectUri().toString())
                 .setShowDialog(false)
-                .setScopes(new String[] {"user-read-email" }) // <--- Change the scope of your requested token here
                 .setCampaign("your-campaign-token")
                 .build();
+
+        //.setScopes(new String[] { "user-read-email" }) // <--- Change the scope of your requested token here
+
     }
 
     /**
@@ -211,8 +214,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         cancelCall();
         super.onDestroy();
     }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mViewModel = new ViewModelProvider(this).get(RecsViewModel.class);
+        // TODO: Use the ViewModel
+    }
+
 }

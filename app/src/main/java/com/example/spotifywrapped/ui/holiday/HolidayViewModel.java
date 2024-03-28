@@ -1,4 +1,4 @@
-package com.example.spotify_wrapped.ui.holiday;
+package com.example.spotifywrapped.ui.holiday;
 
 import androidx.lifecycle.ViewModel;
 
