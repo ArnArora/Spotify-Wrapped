@@ -1,5 +1,6 @@
 package com.example.spotifywrapped.ui.wrapped;
 
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
@@ -15,8 +16,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.GridLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.spotifywrapped.Home;
 import com.example.spotifywrapped.R;
 
 import org.json.JSONArray;
@@ -42,6 +47,8 @@ public class WrappedFragment extends Fragment {
     private final OkHttpClient mOkHttpClient = new OkHttpClient();
     private String accessToken;
     private Call mCall;
+    private GridLayout tracksGrid;
+    private Button homeButton;
     public static WrappedFragment newInstance() {
         return new WrappedFragment();
     }
@@ -49,7 +56,9 @@ public class WrappedFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.wrapped_home, container, false);
         accessToken = getArguments().getString("access-token");
+        tracksGrid = view.findViewById(R.id.top_tracks);
         try {
             getTopTracks();
         } catch (IOException e) {
@@ -57,6 +66,15 @@ public class WrappedFragment extends Fragment {
             Toast.makeText(getContext(), "Failed to parse data",
                     Toast.LENGTH_SHORT).show();
         }
+        homeButton = view.findViewById(R.id.wrapped_home_button);
+        homeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Home home = new Home();
+                FragmentTransaction fm = getActivity().getSupportFragmentManager().beginTransaction();
+                fm.replace(R.id.base_container, home);
+            }
+        });
         return inflater.inflate(R.layout.wrapped_home, container, false);
     }
 
@@ -99,10 +117,19 @@ public class WrappedFragment extends Fragment {
     }
 
     private void parseTopTracks(JSONObject jsonObject) throws JSONException {
-        Log.d("IN HERE", "HI");
         JSONArray items = jsonObject.getJSONArray("items");
+        String[] tracks = new String[items.length()];
         for (int i = 0; i < items.length(); i++) {
-            items.getJSONObject(i).getString("name");
+            tracks[i] = items.getJSONObject(i).getString("name");
+        }
+        populateTracksGrid(tracks);
+    }
+
+    private void populateTracksGrid(String[] tracks) {
+        for (int i = 0; i < tracksGrid.getChildCount(); i++) {
+            TextView curView = (TextView) tracksGrid.getChildAt(i);
+            Log.d("TRACK", tracks[i]);
+            curView.setText(tracks[i]);
         }
     }
 
