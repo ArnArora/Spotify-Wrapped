@@ -38,8 +38,6 @@ public class Home extends Fragment {
     private final OkHttpClient mOkHttpClient = new OkHttpClient();
     private String accessToken;
     private Call mCall;
-    private JSONObject currentJSON;
-
     public static final String CLIENT_ID = "3b801cbc275249a6be39b9ac60b47962";
     public static final String REDIRECT_URI = "com.example.spotifywrapped://auth";
     @Override
@@ -59,37 +57,28 @@ public class Home extends Fragment {
         goToRecs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment recsFragment = new RecsFragment();
-
-                FragmentTransaction fm = getActivity().getSupportFragmentManager().beginTransaction();
-                fm.replace(R.id.base_container, recsFragment).commit();
+                sendGetRequest(1, "WHATEVER-LINK");
             }
         });
 
         goToWrapped.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment wrappedFragment = new WrappedFragment();
-
-                FragmentTransaction fm = getActivity().getSupportFragmentManager().beginTransaction();
-                fm.replace(R.id.base_container, wrappedFragment).commit();
+                sendGetRequest(0, "me/top/tracks?limit=10");
             }
         });
 
         goToHoliday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment holidayFragment = new HolidayFragment();
-
-                FragmentTransaction fm = getActivity().getSupportFragmentManager().beginTransaction();
-                fm.replace(R.id.base_container, holidayFragment).commit();
+                sendGetRequest(2, "WHATEVER-LINK");
             }
         });
 
         return view;
     }
 
-    public void sendGetRequest(String url) {
+    public void sendGetRequest(int num, String url) {
         if (accessToken == null) {
             Toast.makeText(getContext(), "Cannot retrieve user data right now", Toast.LENGTH_SHORT).show();
             return;
@@ -111,20 +100,29 @@ public class Home extends Fragment {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                try {
-                    final JSONObject jsonObject = new JSONObject(response.body().string());
-                    setJSON(jsonObject);
-                } catch (JSONException e) {
-                    Log.d("JSON", "Failed to parse data: " + e);
-                    Toast.makeText(getContext(), "Failed to parse data",
-                            Toast.LENGTH_SHORT).show();
-                }
+                startFragment(num, response.body().string());
             }
         });
     }
 
-    public void setJSON(JSONObject jsonObject) {
-        currentJSON = jsonObject;
+    public void startFragment(int num, String jsonString) {
+        Fragment newFragment;
+        if (num == 0) {
+            newFragment = new WrappedFragment();
+        } else if (num == 1) {
+            newFragment = new RecsFragment();
+        } else {
+            newFragment = new HolidayFragment();
+        }
+
+        FragmentTransaction fm = getActivity().getSupportFragmentManager().beginTransaction();
+        fm.replace(R.id.base_container, newFragment);
+
+        Bundle bundle = new Bundle();
+        bundle.putString("json-string", jsonString);
+        newFragment.setArguments(bundle);
+
+        fm.commit();
     }
 
     private void cancelCall() {

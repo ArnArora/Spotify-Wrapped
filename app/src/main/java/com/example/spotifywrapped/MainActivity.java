@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String CLIENT_ID = "3b801cbc275249a6be39b9ac60b47962";
     public static final String REDIRECT_URI = "com.example.spotifywrapped://auth";
 
-    public static final String[] scopes = {"user-read-email"};
+    public static final String[] scopes = {"user-read-email", "user-top-read"};
 
     public static final int AUTH_TOKEN_REQUEST_CODE = 0;
     public static final int AUTH_CODE_REQUEST_CODE = 1;
