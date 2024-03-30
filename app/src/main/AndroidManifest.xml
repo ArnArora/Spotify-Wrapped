@@ -12,10 +12,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SpotifyWrapped"
         tools:targetApi="31">
-        <activity
-            android:name=".MainActivity2"
-            android:exported="true"
-            android:theme="@style/Theme.SpotifyWrapped.NoActionBar" />
         <!-- MainActivity -->
         <activity
             android:name=".MainActivity"
