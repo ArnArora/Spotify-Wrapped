@@ -49,12 +49,17 @@ public class RecsFragment extends Fragment {
     private String mAccessToken, mAccessCode;
     private Call mCall;
 
+
     private TextView tokenTextView, codeTextView, profileTextView;
 
     private FragmentRecsBinding binding;
 
-    public static RecsFragment newInstance() {
-        return new RecsFragment();
+    /*public static RecsFragment newInstance() {
+        return new RecsFragment(ac);
+    }*/
+
+    public RecsFragment(String accessToken) {
+        mAccessToken = accessToken;
     }
 
     @Override
