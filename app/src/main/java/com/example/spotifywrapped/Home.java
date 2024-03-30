@@ -33,13 +33,7 @@ public class Home extends Fragment {
     Button goToRecs;
     Button goToWrapped;
     Button goToHoliday;
-    //Button goToShare;
-
-    private final OkHttpClient mOkHttpClient = new OkHttpClient();
     private String accessToken;
-    private Call mCall;
-    public static final String CLIENT_ID = "3b801cbc275249a6be39b9ac60b47962";
-    public static final String REDIRECT_URI = "com.example.spotifywrapped://auth";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -52,60 +46,32 @@ public class Home extends Fragment {
         TextView tokenView = view.findViewById(R.id.tokenView);
 
         accessToken = getArguments().getString("access-token");
-        tokenView.setText(accessToken);
 
         goToRecs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendGetRequest(1, "WHATEVER-LINK");
+                startFragment(1);
             }
         });
 
         goToWrapped.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendGetRequest(0, "me/top/tracks?limit=10");
+                startFragment(0);
             }
         });
 
         goToHoliday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendGetRequest(2, "WHATEVER-LINK");
+                startFragment(2);
             }
         });
 
         return view;
     }
 
-    public void sendGetRequest(int num, String url) {
-        if (accessToken == null) {
-            Toast.makeText(getContext(), "Cannot retrieve user data right now", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        final Request request = new Request.Builder()
-                .url("https://api.spotify.com/v1/" + url)
-                .addHeader("Authorization", "Bearer " + accessToken)
-                .build();
-
-        cancelCall();
-        mCall = mOkHttpClient.newCall(request);
-        mCall.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.d("HTTP", "Failed to fetch data: " + e);
-                Toast.makeText(getContext(), "Failed to fetch data",
-                        Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                startFragment(num, response.body().string());
-            }
-        });
-    }
-
-    public void startFragment(int num, String jsonString) {
+    public void startFragment(int num) {
         Fragment newFragment;
         if (num == 0) {
             newFragment = new WrappedFragment();
@@ -119,21 +85,9 @@ public class Home extends Fragment {
         fm.replace(R.id.base_container, newFragment);
 
         Bundle bundle = new Bundle();
-        bundle.putString("json-string", jsonString);
+        bundle.putString("access-token", accessToken);
         newFragment.setArguments(bundle);
 
         fm.commit();
-    }
-
-    private void cancelCall() {
-        if (mCall != null) {
-            mCall.cancel();
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        cancelCall();
-        super.onDestroy();
     }
 }

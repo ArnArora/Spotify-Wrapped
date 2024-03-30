@@ -54,14 +54,6 @@ public class RecsFragment extends Fragment {
 
     private FragmentRecsBinding binding;
 
-    /*public static RecsFragment newInstance() {
-        return new RecsFragment(ac);
-    }*/
-
-    public RecsFragment(String accessToken) {
-        mAccessToken = accessToken;
-    }
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
