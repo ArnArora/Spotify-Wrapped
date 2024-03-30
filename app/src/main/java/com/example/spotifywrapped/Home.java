@@ -59,7 +59,7 @@ public class Home extends Fragment {
         goToRecs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment recsFragment = new RecsFragment();
+                Fragment recsFragment = new RecsFragment(accessToken);
 
                 FragmentTransaction fm = getActivity().getSupportFragmentManager().beginTransaction();
                 fm.replace(R.id.base_container, recsFragment).commit();
