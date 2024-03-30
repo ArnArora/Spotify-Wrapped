@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.example.spotifywrapped.R;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -41,8 +42,6 @@ public class WrappedFragment extends Fragment {
     private final OkHttpClient mOkHttpClient = new OkHttpClient();
     private String accessToken;
     private Call mCall;
-    private JSONObject jsonObject;
-
     public static WrappedFragment newInstance() {
         return new WrappedFragment();
     }
@@ -51,10 +50,17 @@ public class WrappedFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         accessToken = getArguments().getString("access-token");
+        try {
+            getTopTracks();
+        } catch (IOException e) {
+            Log.d("JSON", "Failed to parse data: " + e);
+            Toast.makeText(getContext(), "Failed to parse data",
+                    Toast.LENGTH_SHORT).show();
+        }
         return inflater.inflate(R.layout.wrapped_home, container, false);
     }
 
-    public void sendGetRequest(String url) {
+    public void sendGetRequest(int num, String url) {
         if (accessToken == null) {
             Toast.makeText(getContext(), "Cannot retrieve user data right now", Toast.LENGTH_SHORT).show();
             return;
@@ -78,22 +84,26 @@ public class WrappedFragment extends Fragment {
             public void onResponse(Call call, Response response) throws IOException {
                 try {
                     final JSONObject jsonObject = new JSONObject(response.body().string());
-                    setJSON(jsonObject);
+                    if (num == 0) {
+                        parseTopTracks(jsonObject);
+                    }
                 } catch (JSONException e) {
                     Log.d("JSON", "Failed to parse data: " + e);
-                    Toast.makeText(getContext(), "Failed to parse data",
-                            Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
 
-    public void getTopTracks() {
-        sendGetRequest("https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=10");
+    public void getTopTracks() throws IOException {
+        sendGetRequest(0, "me/top/tracks?time_range=short_term&limit=10");
     }
 
-    private void setJSON(JSONObject json) {
-        jsonObject = json;
+    private void parseTopTracks(JSONObject jsonObject) throws JSONException {
+        Log.d("IN HERE", "HI");
+        JSONArray items = jsonObject.getJSONArray("items");
+        for (int i = 0; i < items.length(); i++) {
+            items.getJSONObject(i).getString("name");
+        }
     }
 
     private void cancelCall() {
