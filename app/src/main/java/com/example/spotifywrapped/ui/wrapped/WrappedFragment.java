@@ -1,5 +1,6 @@
 package com.example.spotifywrapped.ui.wrapped;
 
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
@@ -14,8 +15,11 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
+import com.example.spotifywrapped.Home;
 import com.example.spotifywrapped.R;
+import com.example.spotifywrapped.ui.recommendations.RecsFragment;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -27,6 +31,8 @@ public class WrappedFragment extends Fragment {
     public static final String CLIENT_ID = "3b801cbc275249a6be39b9ac60b47962";
     private WrappedViewModel mViewModel;
 
+    Button goHome;
+
     public static WrappedFragment newInstance() {
         return new WrappedFragment();
     }
@@ -34,7 +40,21 @@ public class WrappedFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.wrapped_home, container, false);
+        View view = inflater.inflate(R.layout.wrapped_home, container, false);
+
+        goHome = view.findViewById(R.id.wrapped_home_button);
+
+        goHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment homeFragment = new Home();
+
+                FragmentTransaction fm = getActivity().getSupportFragmentManager().beginTransaction();
+                fm.replace(R.id.base_container, homeFragment).commit();
+            }
+        });
+
+        return view;
     }
 
     @Override
@@ -96,10 +116,12 @@ public class WrappedFragment extends Fragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             return Base64.getUrlEncoder().withoutPadding().encodeToString(data);
         }
+
+        return "";
     }
 
     public String getAccessToken(String clientId, String code) throws Exception {
-        
+
         return null;
     }
 

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.home.HomeFragment">
+    tools:context=".BaseActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -79,6 +79,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="0.3"
                 android:background="#FF00FF" />
+
 
         </LinearLayout>
 
@@ -170,8 +171,19 @@
                 android:background="#581845" />
         </GridLayout>
 
+        <Button
+            android:id="@+id/wrapped_home_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="685dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:text="Home" />
+
+
         <!-- LinearLayout with ViewPager for top artists -->
-        <LinearLayout
+        <!--<LinearLayout
             android:id="@+id/top_artists"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -181,7 +193,12 @@
                 android:id="@+id/viewpager"
                 android:layout_width="match_parent"
                 android:layout_height="100dp" />
-        </LinearLayout>
+
+
+        </LinearLayout>-->
+
+
+
 
     </RelativeLayout>
 </ScrollView>
