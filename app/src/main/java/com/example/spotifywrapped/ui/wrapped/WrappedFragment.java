@@ -75,7 +75,7 @@ public class WrappedFragment extends Fragment {
                 fm.replace(R.id.base_container, home);
             }
         });
-        return inflater.inflate(R.layout.wrapped_home, container, false);
+        return view;
     }
 
     public void sendGetRequest(int num, String url) {
@@ -128,7 +128,6 @@ public class WrappedFragment extends Fragment {
     private void populateTracksGrid(String[] tracks) {
         for (int i = 0; i < tracksGrid.getChildCount(); i++) {
             TextView curView = (TextView) tracksGrid.getChildAt(i);
-            Log.d("TRACK", tracks[i]);
             curView.setText(tracks[i]);
         }
     }

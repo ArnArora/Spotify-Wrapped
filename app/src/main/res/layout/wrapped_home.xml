@@ -114,6 +114,7 @@
                 android:layout_margin="20dp"
                 android:layout_gravity="center"
                 android:textColor="@color/black"
+                android:text="Checking"
                 android:background="#FF0000" />
 
             <TextView
