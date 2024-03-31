@@ -47,9 +47,8 @@ public class WrappedFragment extends Fragment {
     private final OkHttpClient mOkHttpClient = new OkHttpClient();
     private String accessToken;
     private Call mCall;
-    private GridLayout tracksGrid;
-    private LinearLayout artistsGrid;
     private Button homeButton;
+    private JSONObject artistJSON, trackJSON;
     public static WrappedFragment newInstance() {
         return new WrappedFragment();
     }
@@ -59,15 +58,7 @@ public class WrappedFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.wrapped_home, container, false);
         accessToken = getArguments().getString("access-token");
-        tracksGrid = view.findViewById(R.id.top_tracks);
-        artistsGrid = view.findViewById(R.id.top_artists);
-        try {
-            getTopArtists();
-        } catch (IOException e) {
-            Log.d("JSON", "Failed to parse data: " + e);
-            Toast.makeText(getContext(), "Failed to parse data",
-                    Toast.LENGTH_SHORT).show();
-        }
+
         homeButton = view.findViewById(R.id.wrapped_home_button);
         homeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,6 +68,13 @@ public class WrappedFragment extends Fragment {
                 fm.replace(R.id.base_container, home).commit();
             }
         });
+        try {
+            getTopArtists();
+        } catch (IOException e) {
+            Log.d("JSON", "Failed to parse data: " + e);
+            Toast.makeText(getContext(), "Failed to parse data",
+                    Toast.LENGTH_SHORT).show();
+        }
         return view;
     }
 
@@ -105,11 +103,13 @@ public class WrappedFragment extends Fragment {
                 try {
                     final JSONObject jsonObject = new JSONObject(response.body().string());
                     if (num == 0) {
-                        parseTopTracks(jsonObject);
+                        artistJSON = jsonObject;
+                        getTopTracks();
                     }
                     if (num == 1) {
-                        parseTopArtists(jsonObject);
-                        getTopTracks();
+                        trackJSON = jsonObject;
+                        parseTopArtists(artistJSON);
+                        parseTopTracks(trackJSON);
                     }
                 } catch (JSONException e) {
                     Log.d("JSON", "Failed to parse data: " + e);
@@ -119,11 +119,11 @@ public class WrappedFragment extends Fragment {
     }
 
     public void getTopTracks() throws IOException {
-        sendGetRequest(0, "me/top/tracks?time_range=medium_term&limit=10");
+        sendGetRequest(1, "me/top/tracks?time_range=medium_term&limit=10");
     }
 
     public void getTopArtists() throws IOException {
-        sendGetRequest(1, "me/top/artists?time_range=medium_term&limit=5");
+        sendGetRequest(0, "me/top/artists?time_range=medium_term&limit=5");
     }
 
     private void parseTopTracks(JSONObject jsonObject) throws JSONException {
@@ -145,6 +145,7 @@ public class WrappedFragment extends Fragment {
     }
 
     private void populateArtistsGrid(String[] artists) {
+        LinearLayout artistsGrid = getView().findViewById(R.id.top_artists);
         for (int i = 0; i < artistsGrid.getChildCount(); i++) {
             TextView curView = (TextView) artistsGrid.getChildAt(i);
             curView.setText(artists[i]);
@@ -152,6 +153,7 @@ public class WrappedFragment extends Fragment {
     }
 
     private void populateTracksGrid(String[] tracks) {
+        GridLayout tracksGrid = getView().findViewById(R.id.top_tracks);
         for (int i = 0; i < tracksGrid.getChildCount(); i++) {
             TextView curView = (TextView) tracksGrid.getChildAt(i);
             curView.setText(tracks[i]);
