@@ -44,7 +44,6 @@ import okhttp3.Response;
 
 public class WrappedFragment extends Fragment {
     private WrappedViewModel mViewModel;
-    private String response;
     private final OkHttpClient mOkHttpClient = new OkHttpClient();
     private String accessToken;
     private Call mCall;
@@ -64,7 +63,6 @@ public class WrappedFragment extends Fragment {
         artistsGrid = view.findViewById(R.id.top_artists);
         try {
             getTopArtists();
-            getTopTracks();
         } catch (IOException e) {
             Log.d("JSON", "Failed to parse data: " + e);
             Toast.makeText(getContext(), "Failed to parse data",
@@ -111,6 +109,7 @@ public class WrappedFragment extends Fragment {
                     }
                     if (num == 1) {
                         parseTopArtists(jsonObject);
+                        getTopTracks();
                     }
                 } catch (JSONException e) {
                     Log.d("JSON", "Failed to parse data: " + e);

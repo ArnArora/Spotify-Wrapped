@@ -185,23 +185,5 @@
             android:text="Home" />
 
 
-        <!-- LinearLayout with ViewPager for top artists -->
-        <!--<LinearLayout
-            android:id="@+id/top_artists"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/top_tracks">
-
-            <androidx.viewpager.widget.ViewPager
-                android:id="@+id/viewpager"
-                android:layout_width="match_parent"
-                android:layout_height="100dp" />
-
-
-        </LinearLayout>-->
-
-
-
-
     </RelativeLayout>
 </ScrollView>
