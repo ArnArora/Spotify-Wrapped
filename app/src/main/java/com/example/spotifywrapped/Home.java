@@ -46,6 +46,8 @@ public class Home extends Fragment {
         TextView tokenView = view.findViewById(R.id.tokenView);
 
         accessToken = getArguments().getString("access-token");
+        tokenView.setText(accessToken);
+        Log.d("HERE", accessToken);
 
         goToRecs.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,6 +85,7 @@ public class Home extends Fragment {
 
         FragmentTransaction fm = getActivity().getSupportFragmentManager().beginTransaction();
         fm.replace(R.id.base_container, newFragment);
+        fm.addToBackStack(null);
 
         Bundle bundle = new Bundle();
         bundle.putString("access-token", accessToken);

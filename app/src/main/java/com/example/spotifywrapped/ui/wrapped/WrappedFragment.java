@@ -4,6 +4,8 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
+import android.media.AudioAttributes;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,12 +45,13 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class WrappedFragment extends Fragment {
+public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedListener{
     private WrappedViewModel mViewModel;
     private final OkHttpClient mOkHttpClient = new OkHttpClient();
     private String accessToken;
     private Call mCall;
     private Button homeButton;
+    private MediaPlayer mediaPlayer;
     private JSONObject artistJSON, trackJSON;
     public static WrappedFragment newInstance() {
         return new WrappedFragment();
@@ -64,8 +68,7 @@ public class WrappedFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Home home = new Home();
-                FragmentTransaction fm = getActivity().getSupportFragmentManager().beginTransaction();
-                fm.replace(R.id.base_container, home).commit();
+                getActivity().getSupportFragmentManager().popBackStack();
             }
         });
         try {
@@ -129,10 +132,12 @@ public class WrappedFragment extends Fragment {
     private void parseTopTracks(JSONObject jsonObject) throws JSONException {
         JSONArray items = jsonObject.getJSONArray("items");
         String[] tracks = new String[items.length()];
+        String[] urls = new String[items.length()];
         for (int i = 0; i < items.length(); i++) {
             tracks[i] = items.getJSONObject(i).getString("name");
+            urls[i] = items.getJSONObject(i).getString("preview_url");
         }
-        populateTracksGrid(tracks);
+        populateTracksGrid(tracks, urls);
     }
 
     private void parseTopArtists(JSONObject jsonObject) throws JSONException {
@@ -152,17 +157,56 @@ public class WrappedFragment extends Fragment {
         }
     }
 
-    private void populateTracksGrid(String[] tracks) {
+    private void populateTracksGrid(String[] tracks, String[] urls) {
         GridLayout tracksGrid = getView().findViewById(R.id.top_tracks);
         for (int i = 0; i < tracksGrid.getChildCount(); i++) {
             TextView curView = (TextView) tracksGrid.getChildAt(i);
+            if (urls[i] == null) {
+                curView.setClickable(false);
+            }
+            final String URL = urls[i];
+            curView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    playTrack(URL);
+                }
+            });
             curView.setText(tracks[i]);
         }
+    }
+
+    private void playTrack(String url) {
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setAudioAttributes(
+                new AudioAttributes.Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .build()
+        );
+        try {
+            mediaPlayer.setDataSource(url);
+            mediaPlayer.setOnPreparedListener(this);
+            mediaPlayer.prepareAsync();
+        } catch (IOException e) {
+            Toast.makeText(getContext(), "Cannot load song", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void onPrepared(MediaPlayer player) {
+        player.start();
     }
 
     private void cancelCall() {
         if (mCall != null) {
             mCall.cancel();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
         }
     }
 
