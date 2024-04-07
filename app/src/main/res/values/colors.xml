@@ -2,4 +2,27 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+
+    <color name="_bg__top_artists_ek2_color">#000000</color>
+    <color name="_bg__top_artists_ek4_color">#ABEDBB</color>
+    <color name="__1_color">#22306D</color>
+
+    <color name="_bg__top_songs_color">#000000</color>
+    <color name="_bg__top_songs_ek1_color">#EBAEF5</color>
+
+
+    <color name="_bg__wrapped_color">#503658</color>
+    <color name="_bg__group_ek1_color">#000000</color>
+    <color name="top_artists_color">#E5AB8A</color>
+    <color name="__1_ariana_grande__2_myd__3_weval__4_le_wanski__5_drake_color">#CFF469</color>
+
+
 </resources>
