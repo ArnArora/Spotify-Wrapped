@@ -6,6 +6,9 @@
     <string name="Password">Password</string>
     <string name="forgot_password">Forgot Password</string>
     <string name="LOGIN">LOGIN</string>
+    <string name="login">Log In</string>
+    <string name="create_account">Create Account</string>
+    <string name="view_past_wrapped">View Past Wrapped</string>
 
     <string name="home_page">Home Page</string>
     <string name="see_my_wrapped">See My Wrapped</string>

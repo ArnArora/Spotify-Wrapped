@@ -93,7 +93,6 @@ public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedL
         homeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Home home = new Home();
                 getActivity().getSupportFragmentManager().popBackStack();
             }
         });

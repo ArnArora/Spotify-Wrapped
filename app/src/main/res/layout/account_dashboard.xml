@@ -7,56 +7,80 @@
     tools:context=".BaseActivity">
 
     <TextView
-        android:id="@+id/accountTitle"
+        android:id="@+id/dashboardTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="44dp"
-        android:text="@string/view_past_wrapped"
+        android:text="Account Dashboard"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/createAccount"
+        android:id="@+id/viewPastTitles"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/accountTitle"
+        android:layout_below="@id/dashboardTitle"
         android:layout_marginTop="88dp"
         android:backgroundTint="#30ffffff"
-        android:text="@string/create_account"
+        android:text="View Past Wrapped"
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/accountTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/dashboardTitle" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/login"
+        android:id="@+id/updateAccount"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/createAccount"
+        android:layout_below="@id/viewPastTitles"
         android:layout_marginTop="20dp"
         android:backgroundTint="#30ffffff"
-        android:text="@string/login"
+        android:text="Update Account"
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/createAccount" />
+        app:layout_constraintTop_toBottomOf="@+id/viewPastTitles" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/backToHome"
+        android:id="@+id/deleteAccount"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/login"
+        android:layout_below="@id/updateAccount"
         android:layout_marginTop="20dp"
         android:backgroundTint="#30ffffff"
-        android:text="@string/home_page"
+        android:text="Delete Account"
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login" />
+        app:layout_constraintTop_toBottomOf="@+id/updateAccount" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/logout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/deleteAccount"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="#30ffffff"
+        android:text="Log Out"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/deleteAccount" />
+
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_revert" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
