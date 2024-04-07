@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +37,7 @@ import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.Calendar;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -61,6 +63,30 @@ public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedL
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.wrapped_home, container, false);
+
+        int background = R.drawable.green;
+        String titleText = "Your Spotify Wrapped - Enjoy!";
+        Calendar cal = Calendar.getInstance();
+        int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
+        int month = cal.get(Calendar.MONTH);
+        if (month == 1 && dayOfMonth == 14) {
+            background = R.drawable.heart_background;
+            titleText = "Your Spotify Wrapped - Happy Valentine's Day!";
+        }
+        if (month == 9 && dayOfMonth == 31) {
+            background = R.drawable.ghost;
+            titleText = "Your Spotify Wrapped - Happy Halloween!";
+        }
+        if (month == 11 && dayOfMonth == 25) {
+            background = R.drawable.winter;
+            titleText = "Your Spotify Wrapped - Merry Christmas!";
+        }
+
+        RelativeLayout layout = view.findViewById(R.id.wrapped_layout);
+        layout.setBackgroundResource(background);
+        TextView title = view.findViewById(R.id.text_welcome);
+        title.setText(titleText);
+
         accessToken = getArguments().getString("access-token");
 
         homeButton = view.findViewById(R.id.wrapped_home_button);

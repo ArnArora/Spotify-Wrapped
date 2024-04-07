@@ -69,27 +69,15 @@
         android:layout_marginBottom="2dp"
         android:textColor="@color/black" />
 
-    <ImageView
-        android:id="@+id/imageView5"
-        android:layout_width="250dp"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/past_wrapped"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/recButton"
-        android:layout_marginTop="15dp"
-        app:srcCompat="@drawable/cd"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="15dp"
-
-        />
-
-    <TextView
-        android:id="@+id/tokenView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/imageView5"
-        android:layout_alignBottom="@+id/imageView5"
-        android:layout_marginEnd="-72dp"
-        android:layout_marginBottom="175dp"
-        android:text="Access Token" />
-
+        android:layout_below="@id/recButton"
+        android:text="@string/past_wrapped"
+        android:backgroundTint="#30ffffff"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
+        android:textColor="@color/black" />
 
 </RelativeLayout>

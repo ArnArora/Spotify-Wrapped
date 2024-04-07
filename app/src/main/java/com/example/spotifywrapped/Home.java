@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.spotifywrapped.ui.holiday.HolidayFragment;
+import com.example.spotifywrapped.ui.account.AccountFragment;
 import com.example.spotifywrapped.ui.recommendations.RecsFragment;
 import com.example.spotifywrapped.ui.wrapped.WrappedFragment;
 
@@ -33,6 +33,7 @@ public class Home extends Fragment {
     Button goToRecs;
     Button goToWrapped;
     Button goToHoliday;
+    Button goToPastWrapped;
     private String accessToken;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -43,11 +44,9 @@ public class Home extends Fragment {
         goToRecs = view.findViewById(R.id.recButton);
         goToWrapped = view.findViewById(R.id.wrappedButton);
         goToHoliday = view.findViewById(R.id.holidayButton);
-        TextView tokenView = view.findViewById(R.id.tokenView);
+        goToPastWrapped = view.findViewById(R.id.past_wrapped);
 
         accessToken = getArguments().getString("access-token");
-        tokenView.setText(accessToken);
-        Log.d("HERE", accessToken);
 
         goToRecs.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,17 +69,26 @@ public class Home extends Fragment {
             }
         });
 
+        goToPastWrapped.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startFragment(3);
+            }
+        });
+
         return view;
     }
 
     public void startFragment(int num) {
-        Fragment newFragment;
+        Fragment newFragment = null;
         if (num == 0) {
             newFragment = new WrappedFragment();
         } else if (num == 1) {
             newFragment = new RecsFragment();
-        } else {
-            newFragment = new HolidayFragment();
+        } else if (num == 2){
+            newFragment = new WrappedFragment();
+        } else if (num == 3) {
+            newFragment = new AccountFragment();
         }
 
         FragmentTransaction fm = getActivity().getSupportFragmentManager().beginTransaction();

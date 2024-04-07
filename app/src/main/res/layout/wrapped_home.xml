@@ -9,6 +9,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/wrapped_layout"
         android:background = "@drawable/green">
 
 
@@ -77,7 +78,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/top_songs"
+            android:id="@+id/best_songs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/top_artists"
@@ -94,7 +95,7 @@
             android:id="@+id/top_tracks"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/top_songs"
+            android:layout_below="@id/best_songs"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="8dp"
             android:columnCount="3"
@@ -190,7 +191,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="685dp"
             android:layout_marginEnd="8dp"
-            android:layout_weight="1"
             android:text="Home" />
     </RelativeLayout>
 </ScrollView>
