@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -28,6 +29,8 @@ import android.widget.Toast;
 
 import com.example.spotifywrapped.Home;
 import com.example.spotifywrapped.R;
+import com.example.spotifywrapped.ui.account.AccountFragment;
+import com.example.spotifywrapped.ui.recommendations.RecsFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,7 +55,10 @@ public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedL
     private final OkHttpClient mOkHttpClient = new OkHttpClient();
     private String accessToken;
     private Call mCall;
-    private Button homeButton;
+    //private Button homeButton;
+    private ImageButton homeButton;
+
+    private ImageButton nextButton;
     private MediaPlayer mediaPlayer;
     private JSONObject artistJSON, trackJSON;
     public static WrappedFragment newInstance() {
@@ -62,7 +68,7 @@ public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedL
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.wrapped_home, container, false);
+        View view = inflater.inflate(R.layout.top_artists, container, false);
 
         int background = R.drawable.green;
         String titleText = "Your Spotify Wrapped - Enjoy!";
@@ -82,21 +88,53 @@ public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedL
             titleText = "Your Spotify Wrapped - Merry Christmas!";
         }
 
-        RelativeLayout layout = view.findViewById(R.id.wrapped_layout);
+        RelativeLayout layout = view.findViewById(R.id.content_container);
         layout.setBackgroundResource(background);
-        TextView title = view.findViewById(R.id.text_welcome);
-        title.setText(titleText);
+
+        view.findViewById(R.id.vector_ek4).setBackgroundResource(background);
+
+        //TextView title = view.findViewById(R.id.text_welcome);
+        //title.setText(titleText);
 
         accessToken = getArguments().getString("access-token");
 
-        homeButton = view.findViewById(R.id.wrapped_home_button);
+        homeButton = view.findViewById(R.id.vector_ek4);
         homeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Home home = new Home();
-                getActivity().getSupportFragmentManager().popBackStack();
+                Fragment newFragment = new Home();
+
+                FragmentTransaction fm = getActivity().getSupportFragmentManager().beginTransaction();
+                fm.replace(R.id.base_container, newFragment);
+                fm.addToBackStack(null);
+
+                Bundle bundle = new Bundle();
+                bundle.putString("access-token", accessToken);
+                newFragment.setArguments(bundle);
+
+                fm.commit();
             }
         });
+
+        nextButton = view.findViewById(R.id.artists_next_button);
+
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment newFragment = new SongsFragment();
+
+                FragmentTransaction fm = getActivity().getSupportFragmentManager().beginTransaction();
+                fm.replace(R.id.base_container, newFragment);
+                fm.addToBackStack(null);
+
+                Bundle bundle = new Bundle();
+                bundle.putString("access-token", accessToken);
+                newFragment.setArguments(bundle);
+
+                fm.commit();
+            }
+        });
+
         try {
             getTopArtists();
         } catch (IOException e) {
@@ -106,6 +144,7 @@ public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedL
         }
         return view;
     }
+
 
     public void sendGetRequest(int num, String url) {
         if (accessToken == null) {
@@ -130,7 +169,9 @@ public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedL
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 try {
+                    //System.out.println(response.body().string());
                     final JSONObject jsonObject = new JSONObject(response.body().string());
+                    //final JSONObject jsonObject = new JSONObject(response.body().string().substring(response.body().string().indexOf("{"), response.body().string().lastIndexOf("}") + 1));
                     if (num == 0) {
                         artistJSON = jsonObject;
                         getTopTracks();
@@ -171,20 +212,36 @@ public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedL
         String[] artists = new String[items.length()];
         for (int i = 0; i < items.length(); i++) {
             artists[i] = items.getJSONObject(i).getString("name");
+            System.out.println(artists[i]);
         }
         populateArtistsGrid(artists);
     }
 
     private void populateArtistsGrid(String[] artists) {
-        LinearLayout artistsGrid = getView().findViewById(R.id.top_artists);
+        /*LinearLayout artistsGrid = getView().findViewById(R.id.top_artists);
         for (int i = 0; i < artistsGrid.getChildCount(); i++) {
             TextView curView = (TextView) artistsGrid.getChildAt(i);
             curView.setText(artists[i]);
-        }
+        }*/
+
+        TextView artistOne = getView().findViewById(R.id.artistOne);
+        artistOne.setText(artists[0]);
+
+        TextView artistTwo = getView().findViewById(R.id.artistTwo);
+        artistTwo.setText(artists[1]);
+
+        TextView artistThree = getView().findViewById(R.id.artistThree);
+        artistThree.setText(artists[2]);
+
+        TextView artistFour = getView().findViewById(R.id.artistFour);
+        artistFour.setText(artists[3]);
+
+        TextView artistFive = getView().findViewById(R.id.artistFive);
+        artistFive.setText(artists[4]);
     }
 
     private void populateTracksGrid(String[] tracks, String[] urls) {
-        GridLayout tracksGrid = getView().findViewById(R.id.top_tracks);
+        /*GridLayout tracksGrid = getView().findViewById(R.id.top_tracks);
         for (int i = 0; i < tracksGrid.getChildCount(); i++) {
             TextView curView = (TextView) tracksGrid.getChildAt(i);
             if (urls[i] == null) {
@@ -198,7 +255,37 @@ public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedL
                 }
             });
             curView.setText(tracks[i]);
+        }*/
+
+        TextView songOne = getView().findViewById(R.id.songOne);
+        setClickableTrack(songOne, urls[0], tracks[0]);
+
+        TextView songTwo = getView().findViewById(R.id.songTwo);
+        setClickableTrack(songTwo, urls[1], tracks[1]);
+
+        TextView songThree = getView().findViewById(R.id.songThree);
+        setClickableTrack(songThree, urls[2], tracks[2]);
+
+        TextView songFour = getView().findViewById(R.id.songFour);
+        setClickableTrack(songFour, urls[3], tracks[3]);
+
+        TextView songFive = getView().findViewById(R.id.songFive);
+        setClickableTrack(songFive, urls[4], tracks[4]);
+    }
+
+    private void setClickableTrack(TextView curView, String url, String track) {
+        if (url == null) {
+            curView.setClickable(false);
         }
+        final String URL = url;
+        curView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playTrack(URL);
+            }
+        });
+        curView.setText(track);
+
     }
 
     private void playTrack(String url) {
