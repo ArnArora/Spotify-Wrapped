@@ -18,13 +18,13 @@ import okhttp3.OkHttpClient;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String CLIENT_ID = "3b801cbc275249a6be39b9ac60b47962";
+    //public static final String CLIENT_ID = "3b801cbc275249a6be39b9ac60b47962";
 
-    //public static final String CLIENT_ID = "e491319d4b474c5ea52ce46ced1edad1";
+    public static final String CLIENT_ID = "e491319d4b474c5ea52ce46ced1edad1";
 
-    public static final String REDIRECT_URI = "com.example.spotifywrapped://auth";
+    //public static final String REDIRECT_URI = "com.example.spotifywrapped://auth";
 
-    //public static final String REDIRECT_URI = "SPOTIFY-SDK://auth";
+    public static final String REDIRECT_URI = "SPOTIFY-SDK://auth";
 
     public static final String[] scopes = {"user-read-email", "user-top-read"};
 

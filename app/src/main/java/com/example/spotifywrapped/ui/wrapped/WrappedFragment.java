@@ -169,7 +169,7 @@ public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedL
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 try {
-                    //System.out.println(response.body().string());
+                    System.out.println(response.body().string());
                     final JSONObject jsonObject = new JSONObject(response.body().string());
                     //final JSONObject jsonObject = new JSONObject(response.body().string().substring(response.body().string().indexOf("{"), response.body().string().lastIndexOf("}") + 1));
                     if (num == 0) {
