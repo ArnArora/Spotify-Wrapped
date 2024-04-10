@@ -49,5 +49,5 @@
     <string name="top_songs_string">Top Songs</string>
     <string name="__1_ariana_grande__2_myd__3_weval__4_le_wanski__5_drake_string">#1  Ariana Grande#2  Myd#3  Weval#4  Le Wanski#5  Drake</string>
     <string name="__1_ariana_grande__2_myd__3_weval__4_le_wanski__5_drake_ek1_string">#1  Ariana Grande#2  Myd#3  Weval#4  Le Wanski#5  Drake</string>
-    <string name="recommended_tracks">Recommended Tracks</string>
+    <string name="recommended_artists">Recommended Artists</string>
 </resources>

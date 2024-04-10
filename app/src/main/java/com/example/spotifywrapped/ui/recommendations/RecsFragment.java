@@ -1,7 +1,6 @@
 package com.example.spotifywrapped.ui.recommendations;
 
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
 
@@ -9,25 +8,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.content.Intent;
-import android.net.Uri;
-import android.util.Log;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.spotifywrapped.Home;
 import com.example.spotifywrapped.R;
-import com.example.spotifywrapped.databinding.FragmentRecsBinding;
-import com.spotify.sdk.android.auth.AuthorizationClient;
-import com.spotify.sdk.android.auth.AuthorizationRequest;
-import com.spotify.sdk.android.auth.AuthorizationResponse;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -55,17 +48,16 @@ public class RecsFragment extends Fragment {
 
 
     private TextView tokenTextView, codeTextView, profileTextView;
-
-    private FragmentRecsBinding binding;
-
     private ImageButton homeButton;
 
     private String accessToken;
 
+    private JSONObject recsJSON;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.recs_songs, container, false);
+        View view = inflater.inflate(R.layout.recs_artists, container, false);
 
         accessToken = getArguments().getString("access-token");
 
@@ -87,8 +79,104 @@ public class RecsFragment extends Fragment {
             }
         });
 
+        try {
+            getArtistRecs();
+        } catch (IOException e) {
+            Log.d("JSON", "Failed to parse data--: " + e);
+            Toast.makeText(getContext(), "Failed to parse data",
+                    Toast.LENGTH_SHORT).show();
+        }
+
         return view;
     }
 
+    private void cancelCall() {
+        if (mCall != null) {
+            mCall.cancel();
+        }
+    }
+
+    public void onDestroy() {
+        cancelCall();
+        super.onDestroy();
+    }
+
+    public void sendGetRequest(String url) {
+        if (accessToken == null) {
+            Toast.makeText(getContext(), "Cannot retrieve user data right now", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        final Request request = new Request.Builder()
+                .url("https://api.spotify.com/v1/" + url)
+                .addHeader("Authorization", "Bearer " + accessToken)
+                .build();
+
+        cancelCall();
+        mCall = mOkHttpClient.newCall(request);
+        mCall.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("HTTP", "Failed to fetch data: " + e);
+                Toast.makeText(getContext(), "Failed to fetch data",
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    //System.out.println(response.body().string());
+                    //final JSONObject jsonObject = new JSONObject(response.body().string());
+                    String jsonString = response.body().string();
+
+                    //System.out.println(jsonString);
+
+                    final JSONObject jsonObject = new JSONObject(jsonString.substring(jsonString.indexOf("{"), jsonString.lastIndexOf("}") + 1));
+
+                    recsJSON = jsonObject;
+                    //parseTopArtists(artistJSON);
+
+                    //parseTopTracks(trackJSON);
+                    parseArtistRecs(recsJSON);
+                } catch (JSONException e) {
+                    Log.d("JSON", "Failed to parse data**: " + e);
+                }
+            }
+        });
+    }
+
+    public void getArtistRecs() throws IOException {
+        sendGetRequest("recommendations?limit=5&seed_artists=4NHQUGzhtTLFvgF5SZesLK");
+    }
+
+    private void parseArtistRecs(JSONObject jsonObject) throws JSONException {
+        JSONArray items = jsonObject.getJSONArray("tracks");
+        String[] recs = new String[items.length()];
+        //String[] urls = new String[items.length()];
+        for (int i = 0; i < items.length(); i++) {
+            //tracks[i] = items.getJSONObject(i).getString("name");
+            recs[i] = items.getJSONObject(i).getJSONArray("artists").getJSONObject(0).getString("name");
+            //urls[i] = items.getJSONObject(i).getString("preview_url");
+            System.out.println(recs[i]);
+        }
+        //populateTracksGrid(tracks, urls);
+        populateArtistRecsGrid(recs);
+    }
+
+    private void populateArtistRecsGrid(String[] recs) {
+        TextView artistRecOne = getView().findViewById(R.id.artistRecOne);
+        artistRecOne.setText(recs[0]);
+
+        TextView artistRecTwo = getView().findViewById(R.id.artistRecTwo);
+        artistRecTwo.setText(recs[1]);
+
+        TextView artistRecThree = getView().findViewById(R.id.artistRecThree);
+        artistRecThree.setText(recs[2]);
+
+        TextView artistRecFour = getView().findViewById(R.id.artistRecFour);
+        artistRecFour.setText(recs[3]);
+
+        TextView artistRecFive = getView().findViewById(R.id.artistRecFive);
+        artistRecFive.setText(recs[4]);
+    }
 
 }

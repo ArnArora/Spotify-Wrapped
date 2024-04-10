@@ -16,7 +16,7 @@
 	 *
 	 */
 	-->
-	<RelativeLayout android:id="@+id/recs_songs"
+	<RelativeLayout android:id="@+id/recs_artists"
 		android:layout_width="wrap_content" 
 		android:layout_height="match_parent" >
 
@@ -112,7 +112,7 @@
 
 
 									<TextView
-										android:id="@+id/songRecOne"
+										android:id="@+id/artistRecOne"
 										android:layout_width="187.6dp"
 										android:layout_height="40dp"
 										android:layout_marginLeft="0dp"
@@ -175,7 +175,7 @@
 
 
 
-									<TextView android:id="@+id/songRecTwo"
+									<TextView android:id="@+id/artistRecTwo"
 										android:textStyle="bold"
 										android:textSize="16sp"
 										android:textColor="@color/__1_color"
@@ -239,7 +239,7 @@
 									>
 
 
-									<TextView android:id="@+id/songRecThree"
+									<TextView android:id="@+id/artistRecThree"
 										android:textStyle="bold"
 										android:textSize="16sp"
 										android:textColor="@color/__1_color"
@@ -312,7 +312,7 @@
 									>
 
 
-									<TextView android:id="@+id/songRecFive"
+									<TextView android:id="@+id/artistRecFour"
 										android:textStyle="bold"
 										android:textSize="16sp"
 										android:textColor="@color/__1_color"
@@ -385,7 +385,7 @@
 									android:layout_height="wrap_content"
 									>
 
-									<TextView android:id="@+id/artistFive"
+									<TextView android:id="@+id/artistRecFive"
 										android:textStyle="bold"
 										android:textSize="16sp"
 										android:textColor="@color/__1_color"
@@ -404,7 +404,7 @@
 
 					</RelativeLayout>
 
-					<TextView android:id="@+id/songs_recs"
+					<TextView android:id="@+id/artist_recs"
 						android:textStyle="bold"
 						android:textSize="32sp"
 						android:textColor="@color/__1_color"
@@ -412,7 +412,7 @@
 						android:layout_marginTop="36dp"
 						android:layout_width="340dp"
 						android:layout_height="57.2dp"
-						android:text="@string/recommended_tracks"
+						android:text="@string/recommended_artists"
 						 />
 
 				</RelativeLayout>
