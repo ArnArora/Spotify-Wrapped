@@ -50,9 +50,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedListener{
+public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedListener {
     private WrappedViewModel mViewModel;
-    private final OkHttpClient mOkHttpClient = new OkHttpClient();
+    public static final OkHttpClient mOkHttpClient = new OkHttpClient();
     private String accessToken;
     private Call mCall;
     //private Button homeButton;
@@ -60,7 +60,8 @@ public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedL
 
     private ImageButton nextButton;
     private MediaPlayer mediaPlayer;
-    private JSONObject artistJSON, trackJSON;
+    private JSONObject artistJSON;
+
     public static WrappedFragment newInstance() {
         return new WrappedFragment();
     }
@@ -138,7 +139,7 @@ public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedL
         try {
             getTopArtists();
         } catch (IOException e) {
-            Log.d("JSON", "Failed to parse data: " + e);
+            Log.d("JSON", "Failed to parse data--: " + e);
             Toast.makeText(getContext(), "Failed to parse data",
                     Toast.LENGTH_SHORT).show();
         }
@@ -146,7 +147,7 @@ public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedL
     }
 
 
-    public void sendGetRequest(int num, String url) {
+    public void sendGetRequest(String url) {
         if (accessToken == null) {
             Toast.makeText(getContext(), "Cannot retrieve user data right now", Toast.LENGTH_SHORT).show();
             return;
@@ -169,42 +170,27 @@ public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedL
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 try {
-                    System.out.println(response.body().string());
-                    final JSONObject jsonObject = new JSONObject(response.body().string());
-                    //final JSONObject jsonObject = new JSONObject(response.body().string().substring(response.body().string().indexOf("{"), response.body().string().lastIndexOf("}") + 1));
-                    if (num == 0) {
-                        artistJSON = jsonObject;
-                        getTopTracks();
-                    }
-                    if (num == 1) {
-                        trackJSON = jsonObject;
-                        parseTopArtists(artistJSON);
-                        parseTopTracks(trackJSON);
-                    }
+                    //System.out.println(response.body().string());
+                    //final JSONObject jsonObject = new JSONObject(response.body().string());
+                    String jsonString = response.body().string();
+
+                    //System.out.println(jsonString);
+
+                    final JSONObject jsonObject = new JSONObject(jsonString.substring(jsonString.indexOf("{"), jsonString.lastIndexOf("}") + 1));
+
+                    artistJSON = jsonObject;
+                    //getTopTracks();
+
+                    parseTopArtists(artistJSON);
                 } catch (JSONException e) {
-                    Log.d("JSON", "Failed to parse data: " + e);
+                    Log.d("JSON", "Failed to parse data**: " + e);
                 }
             }
         });
     }
 
-    public void getTopTracks() throws IOException {
-        sendGetRequest(1, "me/top/tracks?time_range=medium_term&limit=10");
-    }
-
     public void getTopArtists() throws IOException {
-        sendGetRequest(0, "me/top/artists?time_range=medium_term&limit=5");
-    }
-
-    private void parseTopTracks(JSONObject jsonObject) throws JSONException {
-        JSONArray items = jsonObject.getJSONArray("items");
-        String[] tracks = new String[items.length()];
-        String[] urls = new String[items.length()];
-        for (int i = 0; i < items.length(); i++) {
-            tracks[i] = items.getJSONObject(i).getString("name");
-            urls[i] = items.getJSONObject(i).getString("preview_url");
-        }
-        populateTracksGrid(tracks, urls);
+        sendGetRequest("me/top/artists?time_range=medium_term&limit=5");
     }
 
     private void parseTopArtists(JSONObject jsonObject) throws JSONException {
@@ -238,70 +224,6 @@ public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedL
 
         TextView artistFive = getView().findViewById(R.id.artistFive);
         artistFive.setText(artists[4]);
-    }
-
-    private void populateTracksGrid(String[] tracks, String[] urls) {
-        /*GridLayout tracksGrid = getView().findViewById(R.id.top_tracks);
-        for (int i = 0; i < tracksGrid.getChildCount(); i++) {
-            TextView curView = (TextView) tracksGrid.getChildAt(i);
-            if (urls[i] == null) {
-                curView.setClickable(false);
-            }
-            final String URL = urls[i];
-            curView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    playTrack(URL);
-                }
-            });
-            curView.setText(tracks[i]);
-        }*/
-
-        TextView songOne = getView().findViewById(R.id.songOne);
-        setClickableTrack(songOne, urls[0], tracks[0]);
-
-        TextView songTwo = getView().findViewById(R.id.songTwo);
-        setClickableTrack(songTwo, urls[1], tracks[1]);
-
-        TextView songThree = getView().findViewById(R.id.songThree);
-        setClickableTrack(songThree, urls[2], tracks[2]);
-
-        TextView songFour = getView().findViewById(R.id.songFour);
-        setClickableTrack(songFour, urls[3], tracks[3]);
-
-        TextView songFive = getView().findViewById(R.id.songFive);
-        setClickableTrack(songFive, urls[4], tracks[4]);
-    }
-
-    private void setClickableTrack(TextView curView, String url, String track) {
-        if (url == null) {
-            curView.setClickable(false);
-        }
-        final String URL = url;
-        curView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                playTrack(URL);
-            }
-        });
-        curView.setText(track);
-
-    }
-
-    private void playTrack(String url) {
-        mediaPlayer = new MediaPlayer();
-        mediaPlayer.setAudioAttributes(
-                new AudioAttributes.Builder()
-                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                        .build()
-        );
-        try {
-            mediaPlayer.setDataSource(url);
-            mediaPlayer.setOnPreparedListener(this);
-            mediaPlayer.prepareAsync();
-        } catch (IOException e) {
-            Toast.makeText(getContext(), "Cannot load song", Toast.LENGTH_SHORT).show();
-        }
     }
 
     public void onPrepared(MediaPlayer player) {
