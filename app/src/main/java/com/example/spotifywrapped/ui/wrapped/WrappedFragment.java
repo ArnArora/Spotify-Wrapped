@@ -62,7 +62,6 @@ public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedL
     public static final OkHttpClient mOkHttpClient = new OkHttpClient();
     private String accessToken;
     private Call mCall;
-    //private Button homeButton;
     private ImageButton homeButton;
 
     private ImageButton nextButton;
@@ -105,9 +104,6 @@ public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedL
         layout.setBackgroundResource(background);
 
         view.findViewById(R.id.vector_ek4).setBackgroundResource(background);
-
-        //TextView title = view.findViewById(R.id.text_welcome);
-        //title.setText(titleText);
 
         accessToken = getArguments().getString("access-token");
 
@@ -213,7 +209,6 @@ public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedL
         for (int i = 0; i < items.length(); i++) {
             artists[i] = items.getJSONObject(i).getString("name");
             imageUrls[i] = items.getJSONObject(i).getJSONArray("images").getJSONObject(0).getString("url");
-            System.out.println(artists[i]);
         }
         populateArtistsGrid(artists, imageUrls);
     }
