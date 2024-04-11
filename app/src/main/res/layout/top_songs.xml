@@ -77,7 +77,7 @@
 								android:layout_marginTop="0dp">
 
 								<ImageView
-									android:id="@+id/image"
+									android:id="@+id/songsImageOne"
 									android:layout_width="103dp"
 									android:layout_height="103dp"
 									android:layout_marginStart="0dp"
@@ -139,7 +139,7 @@
 
 
 								<ImageView
-									android:id="@+id/rectangle"
+									android:id="@+id/songsImageTwo"
 									android:layout_width="103dp"
 									android:layout_height="103dp"
 									android:layout_marginStart="0dp"
@@ -202,7 +202,7 @@
 
 
 								<ImageView
-									android:id="@+id/rectangle_ek1"
+									android:id="@+id/songsImageThree"
 									android:layout_width="103dp"
 									android:layout_height="103dp"
 									android:layout_marginStart="0dp"
@@ -275,7 +275,7 @@
 
 
 								<ImageView
-									android:id="@+id/rectangle_ek2"
+									android:id="@+id/songsImageFour"
 									android:layout_width="103dp"
 									android:layout_height="103dp"
 									android:layout_marginStart="0dp"
@@ -347,7 +347,7 @@
 								android:layout_marginTop="0dp">
 
 								<ImageView
-									android:id="@+id/rectangle_ek3"
+									android:id="@+id/songsImageFive"
 									android:layout_width="103dp"
 									android:layout_height="103dp"
 									android:layout_marginStart="0dp"

@@ -267,7 +267,7 @@ public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedL
         super.onDestroy();
     }
 
-    class FetchImage extends Thread {
+    private class FetchImage extends Thread {
         String[] urls;
         Bitmap bitmapOne;
         Bitmap bitmapTwo;

@@ -93,7 +93,7 @@
 								>
 
 
-								<ImageView android:id="@+id/image"
+								<ImageView android:id="@+id/artistImageOne"
 									android:src="@drawable/image"
 									android:contentDescription="image"
 									 android:layout_marginStart="0dp"
@@ -156,7 +156,7 @@
 								>
 
 
-								<ImageView android:id="@+id/rectangle"
+								<ImageView android:id="@+id/artistImageTwo"
 									android:src="@drawable/rectangle"
 									android:contentDescription="rectangle"
 									 android:layout_marginStart="0dp"
@@ -221,7 +221,7 @@
 								>
 
 
-								<ImageView android:id="@+id/rectangle_ek1"
+								<ImageView android:id="@+id/artistImageThree"
 									android:src="@drawable/rectangle_ek1"
 									android:contentDescription="rectangle_ek1"
 									 android:layout_marginStart="0dp"
@@ -294,7 +294,7 @@
 								>
 
 
-								<ImageView android:id="@+id/rectangle_ek2"
+								<ImageView android:id="@+id/artistImageFour"
 									android:src="@drawable/rectangle_ek2"
 									android:contentDescription="rectangle_ek2"
 									 android:layout_marginStart="0dp"
@@ -368,7 +368,7 @@
 								>
 
 
-								<ImageView android:id="@+id/rectangle_ek3"
+								<ImageView android:id="@+id/artistImageFive"
 									android:src="@drawable/rectangle_ek3"
 									android:contentDescription="rectangle_ek3"
 									 android:layout_marginStart="0dp"

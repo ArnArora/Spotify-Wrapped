@@ -1,5 +1,8 @@
 package com.example.spotifywrapped.ui.wrapped;
 
+import android.app.ProgressDialog;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -7,11 +10,13 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +31,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Calendar;
 
 import okhttp3.Call;
@@ -50,6 +56,9 @@ public class SongsFragment extends Fragment implements MediaPlayer.OnPreparedLis
     private Call mCall;
 
     private JSONObject trackJSON;
+
+    Handler mainHandler = new Handler();
+    ProgressDialog progressDialog;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -179,14 +188,17 @@ public class SongsFragment extends Fragment implements MediaPlayer.OnPreparedLis
         JSONArray items = jsonObject.getJSONArray("items");
         String[] tracks = new String[items.length()];
         String[] urls = new String[items.length()];
+        String[] imageUrls = new String[items.length()];
+
         for (int i = 0; i < items.length(); i++) {
             tracks[i] = items.getJSONObject(i).getString("name");
             urls[i] = items.getJSONObject(i).getString("preview_url");
+            imageUrls[i] = items.getJSONObject(i).getJSONObject("album").getJSONArray("images").getJSONObject(0).getString("url");
         }
-        populateTracksGrid(tracks, urls);
+        populateTracksGrid(tracks, urls, imageUrls);
     }
 
-    private void populateTracksGrid(String[] tracks, String[] urls) {
+    private void populateTracksGrid(String[] tracks, String[] urls, String[] imageUrls) {
         /*GridLayout tracksGrid = getView().findViewById(R.id.top_tracks);
         for (int i = 0; i < tracksGrid.getChildCount(); i++) {
             TextView curView = (TextView) tracksGrid.getChildAt(i);
@@ -206,6 +218,8 @@ public class SongsFragment extends Fragment implements MediaPlayer.OnPreparedLis
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                new FetchImage(imageUrls).start();
+
                 TextView songOne = getView().findViewById(R.id.songOne);
                 setClickableTrack(songOne, urls[0], tracks[0]);
 
@@ -297,5 +311,76 @@ public class SongsFragment extends Fragment implements MediaPlayer.OnPreparedLis
         newFragment.setArguments(bundle);
 
         fm.commit();
+    }
+
+    private class FetchImage extends Thread {
+        String[] urls;
+        Bitmap bitmapOne;
+        Bitmap bitmapTwo;
+        Bitmap bitmapThree;
+        Bitmap bitmapFour;
+        Bitmap bitmapFive;
+
+        FetchImage(String[] urls) {
+            this.urls = urls;
+        }
+
+        public void run() {
+            mainHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    progressDialog = new ProgressDialog(getContext());
+                    progressDialog.setMessage("Getting images...");
+                    progressDialog.setCancelable(false);
+                    progressDialog.show();
+                }
+            });
+
+            InputStream inputStream = null;
+            try {
+                inputStream = new java.net.URL(urls[0]).openStream();
+                bitmapOne = BitmapFactory.decodeStream(inputStream);
+
+                inputStream = new java.net.URL(urls[1]).openStream();
+                bitmapTwo = BitmapFactory.decodeStream(inputStream);
+
+                inputStream = new java.net.URL(urls[2]).openStream();
+                bitmapThree = BitmapFactory.decodeStream(inputStream);
+
+                inputStream = new java.net.URL(urls[3]).openStream();
+                bitmapFour = BitmapFactory.decodeStream(inputStream);
+
+                inputStream = new java.net.URL(urls[4]).openStream();
+                bitmapFive = BitmapFactory.decodeStream(inputStream);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            mainHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+
+                    ImageView imageOne = getView().findViewById(R.id.songsImageOne);
+                    imageOne.setImageBitmap(bitmapOne);
+
+                    ImageView imageTwo = getView().findViewById(R.id.songsImageTwo);
+                    imageTwo.setImageBitmap(bitmapTwo);
+
+                    ImageView imageThree = getView().findViewById(R.id.songsImageThree);
+                    imageThree.setImageBitmap(bitmapThree);
+
+                    ImageView imageFour = getView().findViewById(R.id.songsImageFour);
+                    imageFour.setImageBitmap(bitmapFour);
+
+                    ImageView imageFive = getView().findViewById(R.id.songsImageFive);
+                    imageFive.setImageBitmap(bitmapFive);
+                }
+            });
+
+        }
+
     }
 }
