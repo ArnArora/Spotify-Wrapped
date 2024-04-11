@@ -3,7 +3,10 @@ package com.example.spotifywrapped.ui.wrapped;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -14,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,11 +26,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.spotifywrapped.BaseActivity;
 import com.example.spotifywrapped.Home;
 import com.example.spotifywrapped.R;
 import com.example.spotifywrapped.ui.account.AccountFragment;
@@ -37,6 +43,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
@@ -61,6 +68,11 @@ public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedL
     private ImageButton nextButton;
     private MediaPlayer mediaPlayer;
     private JSONObject artistJSON;
+
+    Handler mainHandler = new Handler();
+    ProgressDialog progressDialog;
+
+
 
     public static WrappedFragment newInstance() {
         return new WrappedFragment();
@@ -196,19 +208,23 @@ public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedL
     private void parseTopArtists(JSONObject jsonObject) throws JSONException {
         JSONArray items = jsonObject.getJSONArray("items");
         String[] artists = new String[items.length()];
+        String[] imageUrls = new String[items.length()];
+
         for (int i = 0; i < items.length(); i++) {
             artists[i] = items.getJSONObject(i).getString("name");
+            imageUrls[i] = items.getJSONObject(i).getJSONArray("images").getJSONObject(0).getString("url");
             System.out.println(artists[i]);
         }
-        populateArtistsGrid(artists);
+        populateArtistsGrid(artists, imageUrls);
     }
 
-    private void populateArtistsGrid(String[] artists) {
+    private void populateArtistsGrid(String[] artists, String[] urls) {
         /*LinearLayout artistsGrid = getView().findViewById(R.id.top_artists);
         for (int i = 0; i < artistsGrid.getChildCount(); i++) {
             TextView curView = (TextView) artistsGrid.getChildAt(i);
             curView.setText(artists[i]);
         }*/
+        new FetchImage(urls).start();
 
         TextView artistOne = getView().findViewById(R.id.artistOne);
         artistOne.setText(artists[0]);
@@ -249,5 +265,76 @@ public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedL
     public void onDestroy() {
         cancelCall();
         super.onDestroy();
+    }
+
+    class FetchImage extends Thread {
+        String[] urls;
+        Bitmap bitmapOne;
+        Bitmap bitmapTwo;
+        Bitmap bitmapThree;
+        Bitmap bitmapFour;
+        Bitmap bitmapFive;
+
+        FetchImage(String[] urls) {
+            this.urls = urls;
+        }
+
+        public void run() {
+            mainHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    progressDialog = new ProgressDialog(getContext());
+                    progressDialog.setMessage("Getting images...");
+                    progressDialog.setCancelable(false);
+                    progressDialog.show();
+                }
+            });
+
+            InputStream inputStream = null;
+            try {
+                inputStream = new java.net.URL(urls[0]).openStream();
+                bitmapOne = BitmapFactory.decodeStream(inputStream);
+
+                inputStream = new java.net.URL(urls[1]).openStream();
+                bitmapTwo = BitmapFactory.decodeStream(inputStream);
+
+                inputStream = new java.net.URL(urls[2]).openStream();
+                bitmapThree = BitmapFactory.decodeStream(inputStream);
+
+                inputStream = new java.net.URL(urls[3]).openStream();
+                bitmapFour = BitmapFactory.decodeStream(inputStream);
+
+                inputStream = new java.net.URL(urls[4]).openStream();
+                bitmapFive = BitmapFactory.decodeStream(inputStream);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            mainHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+
+                    ImageView imageOne = getView().findViewById(R.id.artistImageOne);
+                    imageOne.setImageBitmap(bitmapOne);
+
+                    ImageView imageTwo = getView().findViewById(R.id.artistImageTwo);
+                    imageTwo.setImageBitmap(bitmapTwo);
+
+                    ImageView imageThree = getView().findViewById(R.id.artistImageThree);
+                    imageThree.setImageBitmap(bitmapThree);
+
+                    ImageView imageFour = getView().findViewById(R.id.artistImageFour);
+                    imageFour.setImageBitmap(bitmapFour);
+
+                    ImageView imageFive = getView().findViewById(R.id.artistImageFive);
+                    imageFive.setImageBitmap(bitmapFive);
+                }
+            });
+
+        }
+
     }
 }

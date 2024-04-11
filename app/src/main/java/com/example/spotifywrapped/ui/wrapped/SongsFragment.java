@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Calendar;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -53,6 +55,29 @@ public class SongsFragment extends Fragment implements MediaPlayer.OnPreparedLis
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.top_songs, container, false);
+
+        int background = R.drawable.green;
+        String titleText = "Your Spotify Wrapped - Enjoy!";
+        Calendar cal = Calendar.getInstance();
+        int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
+        int month = cal.get(Calendar.MONTH);
+        if (month == 1 && dayOfMonth == 14) {
+            background = R.drawable.heart_background;
+            titleText = "Your Spotify Wrapped - Happy Valentine's Day!";
+        }
+        if (month == 9 && dayOfMonth == 31) {
+            background = R.drawable.ghost;
+            titleText = "Your Spotify Wrapped - Happy Halloween!";
+        }
+        if (month == 11 && dayOfMonth == 25) {
+            background = R.drawable.winter;
+            titleText = "Your Spotify Wrapped - Merry Christmas!";
+        }
+
+        RelativeLayout layout = view.findViewById(R.id.content_container);
+        layout.setBackgroundResource(background);
+
+        view.findViewById(R.id.songs_home_button).setBackgroundResource(background);
 
         accessToken = getArguments().getString("access-token");
 
