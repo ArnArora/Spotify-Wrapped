@@ -22,7 +22,7 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
 
-        <!-- Specify Redirect URI -->
+        <!-- Specify Redirect URI android:scheme="SPOTIFY-SDK" -->
         <intent-filter>
             <data
                 android:host="auth"

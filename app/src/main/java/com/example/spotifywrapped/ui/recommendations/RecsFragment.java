@@ -1,6 +1,6 @@
 package com.example.spotifywrapped.ui.recommendations;
 
-import androidx.lifecycle.ViewModelProvider;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
 
@@ -8,22 +8,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.content.Intent;
-import android.net.Uri;
-import android.util.Log;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.spotifywrapped.databinding.FragmentRecsBinding;
-import com.spotify.sdk.android.auth.AuthorizationClient;
-import com.spotify.sdk.android.auth.AuthorizationRequest;
-import com.spotify.sdk.android.auth.AuthorizationResponse;
+import com.example.spotifywrapped.Home;
+import com.example.spotifywrapped.R;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -51,157 +48,46 @@ public class RecsFragment extends Fragment {
 
 
     private TextView tokenTextView, codeTextView, profileTextView;
+    private ImageButton homeButton;
 
-    private FragmentRecsBinding binding;
+    private String accessToken;
+
+    private JSONObject recsJSON;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        //return inflater.inflate(R.layout.fragment_recs, container, false);
-        binding = FragmentRecsBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-        mViewModel = new ViewModelProvider(this).get(RecsViewModel.class);
+        View view = inflater.inflate(R.layout.recs_artists, container, false);
 
-        // Initialize the views
-        tokenTextView = binding.tokenTextView;
-        codeTextView = binding.codeTextView;
-        profileTextView = binding.responseTextView;
+        accessToken = getArguments().getString("access-token");
 
-        // Initialize the buttons
-        Button tokenBtn = binding.tokenBtn;
-        Button codeBtn = binding.codeBtn;
-        Button profileBtn = binding.profileBtn;
-
-        // Set the click listeners for the buttons
-
-        tokenBtn.setOnClickListener((v) -> {
-            getToken();
-        });
-
-        codeBtn.setOnClickListener((v) -> {
-            getCode();
-        });
-
-        profileBtn.setOnClickListener((v) -> {
-            onGetUserProfileClicked();
-        });
-
-        return root;
-    }
-
-    /**
-     * Get token from Spotify
-     * This method will open the Spotify login activity and get the token
-     * What is token?
-     * https://developer.spotify.com/documentation/general/guides/authorization-guide/
-     */
-    public void getToken() {
-        final AuthorizationRequest request = getAuthenticationRequest(AuthorizationResponse.Type.TOKEN);
-        AuthorizationClient.openLoginActivity(requireActivity(), AUTH_TOKEN_REQUEST_CODE, request);
-    }
-
-    /**
-     * Get code from Spotify
-     * This method will open the Spotify login activity and get the code
-     * What is code?
-     * https://developer.spotify.com/documentation/general/guides/authorization-guide/
-     */
-    public void getCode() {
-        final AuthorizationRequest request = getAuthenticationRequest(AuthorizationResponse.Type.CODE);
-        AuthorizationClient.openLoginActivity(requireActivity(), AUTH_CODE_REQUEST_CODE, request);
-    }
-
-    /**
-     * When the app leaves this activity to momentarily get a token/code, this function
-     * fetches the result of that external activity to get the response from Spotify
-     */
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        final AuthorizationResponse response = AuthorizationClient.getResponse(resultCode, data);
-
-        // Check which request code is present (if any)
-        if (AUTH_TOKEN_REQUEST_CODE == requestCode) {
-            mAccessToken = response.getAccessToken();
-            setTextAsync(mAccessToken, tokenTextView);
-
-        } else if (AUTH_CODE_REQUEST_CODE == requestCode) {
-            mAccessCode = response.getCode();
-            setTextAsync(mAccessCode, codeTextView);
-        }
-    }
-
-    public void onGetUserProfileClicked() {
-        if (mAccessToken == null) {
-            Toast.makeText(requireActivity(), "You need to get an access token first!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Create a request to get the user profile
-        final Request request = new Request.Builder()
-                .url("https://api.spotify.com/v1/recommendations?seed_artists=4NHQUGzhtTLFvgF5SZesLK&seed_genres=classical%2Ccountry&seed_tracks=0c6xIDDpzE81m2q797ordA")
-                .addHeader("Authorization", "Bearer " + mAccessToken)
-                .build();
-
-        cancelCall();
-        mCall = mOkHttpClient.newCall(request);
-
-        mCall.enqueue(new Callback() {
+        homeButton = view.findViewById(R.id.vector_ek4);
+        homeButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFailure(Call call, IOException e) {
-                Log.d("HTTP", "Failed to fetch data: " + e);
-                Toast.makeText(requireActivity(), "Failed to fetch data, watch Logcat for more details",
-                        Toast.LENGTH_SHORT).show();
-            }
+            public void onClick(View v) {
+                Fragment newFragment = new Home();
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                try {
-                    final JSONObject jsonObject = new JSONObject(response.body().string());
-                    setTextAsync(jsonObject.toString(3), profileTextView);
-                } catch (JSONException e) {
-                    Log.d("JSON", "Failed to parse data: " + e);
-                    Toast.makeText(requireActivity(), "Failed to parse data, watch Logcat for more details",
-                            Toast.LENGTH_SHORT).show();
-                }
+                FragmentTransaction fm = getActivity().getSupportFragmentManager().beginTransaction();
+                fm.replace(R.id.base_container, newFragment);
+                fm.addToBackStack(null);
+
+                Bundle bundle = new Bundle();
+                bundle.putString("access-token", accessToken);
+                newFragment.setArguments(bundle);
+
+                fm.commit();
             }
         });
-    }
 
-    /**
-     * Creates a UI thread to update a TextView in the background
-     * Reduces UI latency and makes the system perform more consistently
-     *
-     * @param text the text to set
-     * @param textView TextView object to update
-     */
-    private void setTextAsync(final String text, TextView textView) {
-        requireActivity().runOnUiThread(() -> textView.setText(text));
-    }
+        try {
+            getArtistRecs();
+        } catch (IOException e) {
+            Log.d("JSON", "Failed to parse data--: " + e);
+            Toast.makeText(getContext(), "Failed to parse data",
+                    Toast.LENGTH_SHORT).show();
+        }
 
-    /**
-     * Get authentication request
-     *
-     * @param type the type of the request
-     * @return the authentication request
-     */
-    private AuthorizationRequest getAuthenticationRequest(AuthorizationResponse.Type type) {
-        return new AuthorizationRequest.Builder(CLIENT_ID, type, getRedirectUri().toString())
-                .setShowDialog(false)
-                .setCampaign("your-campaign-token")
-                .build();
-
-        //.setScopes(new String[] { "user-read-email" }) // <--- Change the scope of your requested token here
-
-    }
-
-    /**
-     * Gets the redirect Uri for Spotify
-     *
-     * @return redirect Uri object
-     */
-    private Uri getRedirectUri() {
-        return Uri.parse(REDIRECT_URI);
+        return view;
     }
 
     private void cancelCall() {
@@ -210,17 +96,87 @@ public class RecsFragment extends Fragment {
         }
     }
 
-    @Override
     public void onDestroy() {
         cancelCall();
         super.onDestroy();
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(RecsViewModel.class);
-        // TODO: Use the ViewModel
+    public void sendGetRequest(String url) {
+        if (accessToken == null) {
+            Toast.makeText(getContext(), "Cannot retrieve user data right now", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        final Request request = new Request.Builder()
+                .url("https://api.spotify.com/v1/" + url)
+                .addHeader("Authorization", "Bearer " + accessToken)
+                .build();
+
+        cancelCall();
+        mCall = mOkHttpClient.newCall(request);
+        mCall.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("HTTP", "Failed to fetch data: " + e);
+                Toast.makeText(getContext(), "Failed to fetch data",
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    //System.out.println(response.body().string());
+                    //final JSONObject jsonObject = new JSONObject(response.body().string());
+                    String jsonString = response.body().string();
+
+                    //System.out.println(jsonString);
+
+                    final JSONObject jsonObject = new JSONObject(jsonString.substring(jsonString.indexOf("{"), jsonString.lastIndexOf("}") + 1));
+
+                    recsJSON = jsonObject;
+                    //parseTopArtists(artistJSON);
+
+                    //parseTopTracks(trackJSON);
+                    parseArtistRecs(recsJSON);
+                } catch (JSONException e) {
+                    Log.d("JSON", "Failed to parse data**: " + e);
+                }
+            }
+        });
+    }
+
+    public void getArtistRecs() throws IOException {
+        sendGetRequest("recommendations?limit=5&seed_artists=4NHQUGzhtTLFvgF5SZesLK");
+    }
+
+    private void parseArtistRecs(JSONObject jsonObject) throws JSONException {
+        JSONArray items = jsonObject.getJSONArray("tracks");
+        String[] recs = new String[items.length()];
+        //String[] urls = new String[items.length()];
+        for (int i = 0; i < items.length(); i++) {
+            //tracks[i] = items.getJSONObject(i).getString("name");
+            recs[i] = items.getJSONObject(i).getJSONArray("artists").getJSONObject(0).getString("name");
+            //urls[i] = items.getJSONObject(i).getString("preview_url");
+            System.out.println(recs[i]);
+        }
+        //populateTracksGrid(tracks, urls);
+        populateArtistRecsGrid(recs);
+    }
+
+    private void populateArtistRecsGrid(String[] recs) {
+        TextView artistRecOne = getView().findViewById(R.id.artistRecOne);
+        artistRecOne.setText(recs[0]);
+
+        TextView artistRecTwo = getView().findViewById(R.id.artistRecTwo);
+        artistRecTwo.setText(recs[1]);
+
+        TextView artistRecThree = getView().findViewById(R.id.artistRecThree);
+        artistRecThree.setText(recs[2]);
+
+        TextView artistRecFour = getView().findViewById(R.id.artistRecFour);
+        artistRecFour.setText(recs[3]);
+
+        TextView artistRecFive = getView().findViewById(R.id.artistRecFive);
+        artistRecFive.setText(recs[4]);
     }
 
 }

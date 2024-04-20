@@ -1,38 +1,26 @@
 package com.example.spotifywrapped.ui.wrapped;
 
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.spotifywrapped.BaseActivity;
 import com.example.spotifywrapped.Home;
 import com.example.spotifywrapped.R;
 import com.example.spotifywrapped.ui.account.AccountFragment;
@@ -44,12 +32,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
 import java.util.Calendar;
-import java.util.Random;
-import java.util.Scanner;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -57,30 +40,30 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedListener {
-    private WrappedViewModel mViewModel;
-    public static final OkHttpClient mOkHttpClient = new OkHttpClient();
-    private String accessToken;
-    private Call mCall;
+public class SongsFragment extends Fragment implements MediaPlayer.OnPreparedListener {
+
     private ImageButton homeButton;
 
     private ImageButton nextButton;
+    private ImageButton prevButton;
+
     private MediaPlayer mediaPlayer;
-    private JSONObject artistJSON;
+
+    private final OkHttpClient mOkHttpClient = WrappedFragment.mOkHttpClient;
+
+    private String accessToken;
+
+    private Call mCall;
+
+    private JSONObject trackJSON;
 
     Handler mainHandler = new Handler();
     ProgressDialog progressDialog;
-
-
-
-    public static WrappedFragment newInstance() {
-        return new WrappedFragment();
-    }
-
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.top_artists, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.top_songs, container, false);
 
         int background = R.drawable.green;
         String titleText = "Your Spotify Wrapped - Enjoy!";
@@ -103,11 +86,11 @@ public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedL
         RelativeLayout layout = view.findViewById(R.id.content_container);
         layout.setBackgroundResource(background);
 
-        view.findViewById(R.id.vector_ek4).setBackgroundResource(background);
+        view.findViewById(R.id.songs_home_button).setBackgroundResource(background);
 
         accessToken = getArguments().getString("access-token");
 
-        homeButton = view.findViewById(R.id.vector_ek4);
+        homeButton = view.findViewById(R.id.songs_home_button);
         homeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -125,35 +108,35 @@ public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedL
             }
         });
 
-        nextButton = view.findViewById(R.id.artists_next_button);
+        prevButton = view.findViewById(R.id.songs_back_button);
+
+        prevButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startFragment(0);
+            }
+        });
+
+        /*nextButton = view.findViewById(R.id.songs_next_button);
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment newFragment = new SongsFragment();
-
-                FragmentTransaction fm = getActivity().getSupportFragmentManager().beginTransaction();
-                fm.replace(R.id.base_container, newFragment);
-                fm.addToBackStack(null);
-
-                Bundle bundle = new Bundle();
-                bundle.putString("access-token", accessToken);
-                newFragment.setArguments(bundle);
-
-                fm.commit();
+                startFragment(1);
             }
-        });
+        });*/
 
         try {
-            getTopArtists();
+            getTopTracks();
         } catch (IOException e) {
             Log.d("JSON", "Failed to parse data--: " + e);
             Toast.makeText(getContext(), "Failed to parse data",
                     Toast.LENGTH_SHORT).show();
         }
-        return view;
-    }
 
+        return view;
+
+    }
 
     public void sendGetRequest(String url) {
         if (accessToken == null) {
@@ -186,10 +169,10 @@ public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedL
 
                     final JSONObject jsonObject = new JSONObject(jsonString.substring(jsonString.indexOf("{"), jsonString.lastIndexOf("}") + 1));
 
-                    artistJSON = jsonObject;
-                    //getTopTracks();
+                    trackJSON = jsonObject;
+                    //parseTopArtists(artistJSON);
 
-                    parseTopArtists(artistJSON);
+                    parseTopTracks(trackJSON);
                 } catch (JSONException e) {
                     Log.d("JSON", "Failed to parse data**: " + e);
                 }
@@ -197,44 +180,93 @@ public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedL
         });
     }
 
-    public void getTopArtists() throws IOException {
-        sendGetRequest("me/top/artists?time_range=medium_term&limit=5");
+    public void getTopTracks() throws IOException {
+        sendGetRequest("me/top/tracks?time_range=medium_term&limit=10");
     }
 
-    private void parseTopArtists(JSONObject jsonObject) throws JSONException {
+    private void parseTopTracks(JSONObject jsonObject) throws JSONException {
         JSONArray items = jsonObject.getJSONArray("items");
-        String[] artists = new String[items.length()];
+        String[] tracks = new String[items.length()];
+        String[] urls = new String[items.length()];
         String[] imageUrls = new String[items.length()];
 
         for (int i = 0; i < items.length(); i++) {
-            artists[i] = items.getJSONObject(i).getString("name");
-            imageUrls[i] = items.getJSONObject(i).getJSONArray("images").getJSONObject(0).getString("url");
+            tracks[i] = items.getJSONObject(i).getString("name");
+            urls[i] = items.getJSONObject(i).getString("preview_url");
+            imageUrls[i] = items.getJSONObject(i).getJSONObject("album").getJSONArray("images").getJSONObject(0).getString("url");
         }
-        populateArtistsGrid(artists, imageUrls);
+        populateTracksGrid(tracks, urls, imageUrls);
     }
 
-    private void populateArtistsGrid(String[] artists, String[] urls) {
-        /*LinearLayout artistsGrid = getView().findViewById(R.id.top_artists);
-        for (int i = 0; i < artistsGrid.getChildCount(); i++) {
-            TextView curView = (TextView) artistsGrid.getChildAt(i);
-            curView.setText(artists[i]);
+    private void populateTracksGrid(String[] tracks, String[] urls, String[] imageUrls) {
+        /*GridLayout tracksGrid = getView().findViewById(R.id.top_tracks);
+        for (int i = 0; i < tracksGrid.getChildCount(); i++) {
+            TextView curView = (TextView) tracksGrid.getChildAt(i);
+            if (urls[i] == null) {
+                curView.setClickable(false);
+            }
+            final String URL = urls[i];
+            curView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    playTrack(URL);
+                }
+            });
+            curView.setText(tracks[i]);
         }*/
-        new FetchImage(urls).start();
 
-        TextView artistOne = getView().findViewById(R.id.artistOne);
-        artistOne.setText(artists[0]);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                new FetchImage(imageUrls).start();
 
-        TextView artistTwo = getView().findViewById(R.id.artistTwo);
-        artistTwo.setText(artists[1]);
+                TextView songOne = getView().findViewById(R.id.songOne);
+                setClickableTrack(songOne, urls[0], tracks[0]);
 
-        TextView artistThree = getView().findViewById(R.id.artistThree);
-        artistThree.setText(artists[2]);
+                TextView songTwo = getView().findViewById(R.id.songTwo);
+                setClickableTrack(songTwo, urls[1], tracks[1]);
 
-        TextView artistFour = getView().findViewById(R.id.artistFour);
-        artistFour.setText(artists[3]);
+                TextView songThree = getView().findViewById(R.id.songThree);
+                setClickableTrack(songThree, urls[2], tracks[2]);
 
-        TextView artistFive = getView().findViewById(R.id.artistFive);
-        artistFive.setText(artists[4]);
+                TextView songFour = getView().findViewById(R.id.songFour);
+                setClickableTrack(songFour, urls[3], tracks[3]);
+
+                TextView songFive = getView().findViewById(R.id.songFive);
+                setClickableTrack(songFive, urls[4], tracks[4]);
+            }
+        });
+    }
+
+    private void setClickableTrack(TextView curView, String url, String track) {
+        if (url == null) {
+            curView.setClickable(false);
+        }
+        final String URL = url;
+        curView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playTrack(URL);
+            }
+        });
+        curView.setText(track);
+
+    }
+
+    private void playTrack(String url) {
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setAudioAttributes(
+                new AudioAttributes.Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .build()
+        );
+        try {
+            mediaPlayer.setDataSource(url);
+            mediaPlayer.setOnPreparedListener(this);
+            mediaPlayer.prepareAsync();
+        } catch (IOException e) {
+            Toast.makeText(getContext(), "Cannot load song", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void onPrepared(MediaPlayer player) {
@@ -260,6 +292,25 @@ public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedL
     public void onDestroy() {
         cancelCall();
         super.onDestroy();
+    }
+
+    public void startFragment(int num) {
+        Fragment newFragment = null;
+        if (num == 0) {
+            newFragment = new WrappedFragment();
+        } else if (num == 1) {
+            newFragment = new SummaryFragment();
+        }
+
+        FragmentTransaction fm = getActivity().getSupportFragmentManager().beginTransaction();
+        fm.replace(R.id.base_container, newFragment);
+        fm.addToBackStack(null);
+
+        Bundle bundle = new Bundle();
+        bundle.putString("access-token", accessToken);
+        newFragment.setArguments(bundle);
+
+        fm.commit();
     }
 
     private class FetchImage extends Thread {
@@ -312,19 +363,19 @@ public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedL
                         progressDialog.dismiss();
                     }
 
-                    ImageView imageOne = getView().findViewById(R.id.artistImageOne);
+                    ImageView imageOne = getView().findViewById(R.id.songsImageOne);
                     imageOne.setImageBitmap(bitmapOne);
 
-                    ImageView imageTwo = getView().findViewById(R.id.artistImageTwo);
+                    ImageView imageTwo = getView().findViewById(R.id.songsImageTwo);
                     imageTwo.setImageBitmap(bitmapTwo);
 
-                    ImageView imageThree = getView().findViewById(R.id.artistImageThree);
+                    ImageView imageThree = getView().findViewById(R.id.songsImageThree);
                     imageThree.setImageBitmap(bitmapThree);
 
-                    ImageView imageFour = getView().findViewById(R.id.artistImageFour);
+                    ImageView imageFour = getView().findViewById(R.id.songsImageFour);
                     imageFour.setImageBitmap(bitmapFour);
 
-                    ImageView imageFive = getView().findViewById(R.id.artistImageFive);
+                    ImageView imageFive = getView().findViewById(R.id.songsImageFive);
                     imageFive.setImageBitmap(bitmapFive);
                 }
             });

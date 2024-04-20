@@ -34,15 +34,15 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="ek_img_content">ExportKit Image</string>
     <string name="__1_string">#1</string>
-    <string name="billie_elish_string">Billie Elish</string>
+    <string name="billie_elish_string"></string>
     <string name="__2_string">#2</string>
-    <string name="artist_string">Artist</string>
+    <string name="artist_string"></string>
     <string name="__3_string">#3</string>
-    <string name="taylor_swift_string">Taylor Swift</string>
+    <string name="taylor_swift_string"></string>
     <string name="__4_string">#4</string>
-    <string name="artist_ek1_string">Artist</string>
+    <string name="artist_ek1_string"></string>
     <string name="__5_string">#5</string>
-    <string name="artist_ek2_string">Artist</string>
+    <string name="artist_ek2_string"></string>
     <string name="your_top_artists_string">Your Top Artists</string>
 
     <string name="your_top_songs_string">Your Top Songs</string>
@@ -52,4 +52,5 @@
     <string name="top_songs_string">Top Songs</string>
     <string name="__1_ariana_grande__2_myd__3_weval__4_le_wanski__5_drake_string">#1  Ariana Grande#2  Myd#3  Weval#4  Le Wanski#5  Drake</string>
     <string name="__1_ariana_grande__2_myd__3_weval__4_le_wanski__5_drake_ek1_string">#1  Ariana Grande#2  Myd#3  Weval#4  Le Wanski#5  Drake</string>
+    <string name="recommended_artists">Recommended Artists</string>
 </resources>
