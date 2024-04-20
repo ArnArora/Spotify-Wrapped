@@ -7,6 +7,7 @@ import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -25,6 +26,12 @@ import com.example.spotifywrapped.Home;
 import com.example.spotifywrapped.R;
 import com.example.spotifywrapped.ui.account.AccountFragment;
 import com.example.spotifywrapped.ui.recommendations.RecsFragment;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,7 +39,10 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -51,11 +61,13 @@ public class SongsFragment extends Fragment implements MediaPlayer.OnPreparedLis
 
     private final OkHttpClient mOkHttpClient = WrappedFragment.mOkHttpClient;
 
-    private String accessToken;
+    private String accessToken, artistString;
 
     private Call mCall;
 
     private JSONObject trackJSON;
+    private FirebaseFirestore db;
+    private FirebaseAuth mAuth;
 
     Handler mainHandler = new Handler();
     ProgressDialog progressDialog;
@@ -89,6 +101,10 @@ public class SongsFragment extends Fragment implements MediaPlayer.OnPreparedLis
         view.findViewById(R.id.songs_home_button).setBackgroundResource(background);
 
         accessToken = getArguments().getString("access-token");
+        artistString = getArguments().getString("artist-string");
+
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         homeButton = view.findViewById(R.id.songs_home_button);
         homeButton.setOnClickListener(new View.OnClickListener() {
@@ -161,9 +177,11 @@ public class SongsFragment extends Fragment implements MediaPlayer.OnPreparedLis
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 try {
-                    //System.out.println(response.body().string());
-                    //final JSONObject jsonObject = new JSONObject(response.body().string());
                     String jsonString = response.body().string();
+
+                    if (mAuth.getCurrentUser() != null) {
+                        saveWrapped(jsonString);
+                    }
 
                     //System.out.println(jsonString);
 
@@ -184,6 +202,25 @@ public class SongsFragment extends Fragment implements MediaPlayer.OnPreparedLis
         sendGetRequest("me/top/tracks?time_range=medium_term&limit=10");
     }
 
+    public void saveWrapped(String wrappedString) {
+        FirebaseUser user = mAuth.getCurrentUser();
+        DocumentReference userRef = db.collection("users").document(user.getUid());
+        String date = getDateAsString();
+        WrappedEntry curEntry = new WrappedEntry(date, artistString, wrappedString);
+        userRef.update("wrappedEntries.entry" + System.currentTimeMillis(), curEntry).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("SUCCESSFULLY ADDED", wrappedString);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("COULD NOT ADD", "Error adding document", e);
+                    }
+                });
+    }
+
     private void parseTopTracks(JSONObject jsonObject) throws JSONException {
         JSONArray items = jsonObject.getJSONArray("items");
         String[] tracks = new String[items.length()];
@@ -199,22 +236,6 @@ public class SongsFragment extends Fragment implements MediaPlayer.OnPreparedLis
     }
 
     private void populateTracksGrid(String[] tracks, String[] urls, String[] imageUrls) {
-        /*GridLayout tracksGrid = getView().findViewById(R.id.top_tracks);
-        for (int i = 0; i < tracksGrid.getChildCount(); i++) {
-            TextView curView = (TextView) tracksGrid.getChildAt(i);
-            if (urls[i] == null) {
-                curView.setClickable(false);
-            }
-            final String URL = urls[i];
-            curView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    playTrack(URL);
-                }
-            });
-            curView.setText(tracks[i]);
-        }*/
-
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -267,6 +288,15 @@ public class SongsFragment extends Fragment implements MediaPlayer.OnPreparedLis
         } catch (IOException e) {
             Toast.makeText(getContext(), "Cannot load song", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public String getDateAsString() {
+        String pattern = "MM/dd/yyyy HH:mm:ss";
+        DateFormat df = new SimpleDateFormat(pattern);
+        Date today = Calendar.getInstance().getTime();
+        String todayAsString = df.format(today);
+        Log.d("DATE", todayAsString);
+        return todayAsString;
     }
 
     public void onPrepared(MediaPlayer player) {

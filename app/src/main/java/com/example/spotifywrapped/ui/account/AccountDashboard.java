@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.spotifywrapped.R;
 import com.example.spotifywrapped.databinding.AccountBinding;
@@ -36,9 +37,25 @@ public class AccountDashboard extends Fragment {
         user = FirebaseAuth.getInstance().getCurrentUser();
 
         ImageButton backButton = binding.backButton;
+        Button viewPast = binding.viewPastTitles;
         Button deleteAccountButton = binding.deleteAccount;
         Button logoutButton = binding.logout;
         Button updateButton = binding.updateAccount;
+
+        viewPast.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment newFragment = new PastDates();
+                FragmentTransaction fm = getActivity().getSupportFragmentManager().beginTransaction();
+                fm.replace(R.id.base_container, newFragment);
+                fm.addToBackStack(null);
+
+                Bundle bundle = new Bundle();
+                newFragment.setArguments(bundle);
+
+                fm.commit();
+            }
+        });
 
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -17,11 +17,11 @@
 	 */
 	-->
 	<RelativeLayout android:id="@+id/recs_artists"
-		android:layout_width="wrap_content" 
+		android:layout_width="wrap_content"
 		android:layout_height="match_parent" >
 
-		<RelativeLayout android:id="@+id/content_container" 
-			android:layout_width="wrap_content" 
+		<RelativeLayout android:id="@+id/content_container"
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content" >
 
 
@@ -82,7 +82,7 @@
 								android:layout_width="79dp"
 								android:layout_height="62dp"
 								android:text="@string/__1_string"
-								 />
+								/>
 
 
 							<RelativeLayout
@@ -94,7 +94,7 @@
 
 
 								<ImageView
-									android:id="@+id/image"
+									android:id="@+id/artistRec1"
 									android:layout_width="103dp"
 									android:layout_height="103dp"
 									android:layout_marginStart="0dp"
@@ -146,7 +146,7 @@
 								android:layout_width="79dp"
 								android:layout_height="62dp"
 								android:text="@string/__2_string"
-								 />
+								/>
 
 
 							<RelativeLayout android:id="@+id/auto_layout_horizontal_ek6"
@@ -157,10 +157,10 @@
 								>
 
 
-								<ImageView android:id="@+id/rectangle"
+								<ImageView android:id="@+id/artistRec2"
 									android:src="@drawable/rectangle"
 									android:contentDescription="rectangle"
-									 android:layout_marginStart="0dp"
+									android:layout_marginStart="0dp"
 									android:layout_marginTop="0dp"
 									android:layout_width="103dp"
 									android:layout_height="103dp" />
@@ -184,7 +184,7 @@
 										android:layout_width="187.6dp"
 										android:layout_height="40dp"
 										android:text="@string/artist_string"
-										 />
+										/>
 
 								</RelativeLayout>
 
@@ -211,7 +211,7 @@
 								android:layout_width="79dp"
 								android:layout_height="62dp"
 								android:text="@string/__3_string"
-								 />
+								/>
 
 
 							<RelativeLayout android:id="@+id/auto_layout_horizontal_ek10"
@@ -222,10 +222,10 @@
 								>
 
 
-								<ImageView android:id="@+id/rectangle_ek1"
+								<ImageView android:id="@+id/artistRec3"
 									android:src="@drawable/rectangle_ek1"
 									android:contentDescription="rectangle_ek1"
-									 android:layout_marginStart="0dp"
+									android:layout_marginStart="0dp"
 									android:layout_marginTop="0dp"
 									android:layout_width="103dp"
 									android:layout_height="103dp" />
@@ -248,7 +248,7 @@
 										android:layout_width="187.6dp"
 										android:layout_height="40dp"
 										android:text="@string/taylor_swift_string"
-										 />
+										/>
 
 								</RelativeLayout>
 
@@ -282,7 +282,7 @@
 									android:layout_width="81dp"
 									android:layout_height="52dp"
 									android:text="@string/__4_string"
-									 />
+									/>
 
 							</RelativeLayout>
 
@@ -295,10 +295,10 @@
 								>
 
 
-								<ImageView android:id="@+id/rectangle_ek2"
+								<ImageView android:id="@+id/artistRec4"
 									android:src="@drawable/rectangle_ek2"
 									android:contentDescription="rectangle_ek2"
-									 android:layout_marginStart="0dp"
+									android:layout_marginStart="0dp"
 									android:layout_marginTop="0dp"
 									android:layout_width="103dp"
 									android:layout_height="103dp" />
@@ -321,7 +321,7 @@
 										android:layout_width="187.6dp"
 										android:layout_height="40dp"
 										android:text="@string/artist_ek1_string"
-										 />
+										/>
 
 								</RelativeLayout>
 
@@ -356,7 +356,7 @@
 									android:layout_width="79dp"
 									android:layout_height="52dp"
 									android:text="@string/__5_string"
-									 />
+									/>
 
 							</RelativeLayout>
 
@@ -369,10 +369,10 @@
 								>
 
 
-								<ImageView android:id="@+id/rectangle_ek3"
+								<ImageView android:id="@+id/artistRec5"
 									android:src="@drawable/rectangle_ek3"
 									android:contentDescription="rectangle_ek3"
-									 android:layout_marginStart="0dp"
+									android:layout_marginStart="0dp"
 									android:layout_marginTop="0dp"
 									android:layout_width="103dp"
 									android:layout_height="103dp" />
@@ -394,7 +394,7 @@
 										android:layout_width="187.6dp"
 										android:layout_height="40dp"
 										android:text="@string/artist_ek2_string"
-										 />
+										/>
 
 								</RelativeLayout>
 
@@ -413,7 +413,7 @@
 						android:layout_width="340dp"
 						android:layout_height="57.2dp"
 						android:text="@string/recommended_artists"
-						 />
+						/>
 
 				</RelativeLayout>
 
@@ -437,7 +437,7 @@
 						<ImageView android:id="@+id/vector_ek2"
 							android:src="@drawable/vector_ek2"
 							android:contentDescription="vector_ek2"
-							 android:layout_marginStart="21dp"
+							android:layout_marginStart="21dp"
 							android:layout_marginTop="697dp"
 							android:layout_width="18.77dp"
 							android:layout_height="14.34dp" />
@@ -445,7 +445,7 @@
 						<ImageView android:id="@+id/vector_ek3"
 							android:src="@drawable/vector_ek3"
 							android:contentDescription="vector_ek3"
-							 android:layout_marginStart="8dp"
+							android:layout_marginStart="8dp"
 							android:layout_marginTop="682dp"
 							android:layout_width="45dp"
 							android:layout_height="45dp" />
@@ -475,7 +475,7 @@
 						<ImageButton android:id="@+id/vector_ek4"
 							android:src="@drawable/vector_ek4"
 							android:contentDescription="vector_ek4"
-							 android:layout_marginStart="0dp"
+							android:layout_marginStart="0dp"
 							android:layout_marginTop="0dp"
 							android:layout_width="45dp"
 							android:layout_height="39.96dp" />

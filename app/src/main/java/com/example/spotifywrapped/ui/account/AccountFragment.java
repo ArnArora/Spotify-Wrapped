@@ -29,10 +29,14 @@ import com.example.spotifywrapped.R;
 import com.example.spotifywrapped.databinding.AccountBinding;
 import com.example.spotifywrapped.databinding.FragmentRecsBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.spotify.sdk.android.auth.AuthorizationClient;
 import com.spotify.sdk.android.auth.AuthorizationRequest;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
@@ -41,6 +45,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -50,7 +55,6 @@ import okhttp3.Response;
 
 public class AccountFragment extends Fragment {
     private AccountBinding binding;
-    private static final String TAG = "EmailPassword";
     private FirebaseAuth mAuth;
     private Button loginButton, createAccountButton, homeButton;
 
@@ -171,6 +175,7 @@ public class AccountFragment extends Fragment {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
+                                        createDocument();
                                         Toast.makeText(getContext(), "Created account",
                                                 Toast.LENGTH_SHORT).show();
                                         loginButton.setText("Go To Account");
@@ -185,5 +190,27 @@ public class AccountFragment extends Fragment {
                 });;
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    public void createDocument() {
+        FirebaseUser user = mAuth.getCurrentUser();
+        String userId = user.getUid();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference userRef = db.collection("users").document(userId);
+
+        // Create an empty document for the user
+        userRef.set(new HashMap<>())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("DOCUMENT CREATED", "Document created successfully for user: " + userId);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("NOT CREATED", "Error creating document for user: " + userId, e);
+                    }
+                });
     }
 }

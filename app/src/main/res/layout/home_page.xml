@@ -35,34 +35,12 @@
         android:text="@string/see_my_wrapped"
         android:textColor="@color/black" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/holidayButton"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/wrappedButton"
-        android:text="@string/is_it_a_holiday"
-        android:backgroundTint="#30ffffff"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="2dp"
-        android:textColor="@color/black" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/shareButton"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/holidayButton"
-        android:text="@string/share_with_friends"
-        android:backgroundTint="#30ffffff"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="2dp"
-        android:textColor="@color/black" />
-
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/recButton"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/shareButton"
+        android:layout_below="@id/wrappedButton"
         android:text="@string/recommendations"
         android:backgroundTint="#30ffffff"
         android:layout_marginTop="2dp"

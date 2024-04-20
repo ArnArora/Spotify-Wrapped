@@ -198,7 +198,7 @@ public class WrappedFragment extends Fragment implements MediaPlayer.OnPreparedL
     }
 
     public void getTopArtists() throws IOException {
-        sendGetRequest("me/top/artists?time_range=medium_term&limit=5");
+        sendGetRequest("me/top/artists?time_range=short_term&limit=5");
     }
 
     private void parseTopArtists(JSONObject jsonObject) throws JSONException {

@@ -32,7 +32,6 @@ public class Home extends Fragment {
 
     Button goToRecs;
     Button goToWrapped;
-    Button goToHoliday;
     Button goToPastWrapped;
     private String accessToken;
     @Override
@@ -43,7 +42,6 @@ public class Home extends Fragment {
 
         goToRecs = view.findViewById(R.id.recButton);
         goToWrapped = view.findViewById(R.id.wrappedButton);
-        goToHoliday = view.findViewById(R.id.holidayButton);
         goToPastWrapped = view.findViewById(R.id.past_wrapped);
 
         accessToken = getArguments().getString("access-token");
@@ -59,13 +57,6 @@ public class Home extends Fragment {
             @Override
             public void onClick(View v) {
                 startFragment(0);
-            }
-        });
-
-        goToHoliday.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startFragment(2);
             }
         });
 
