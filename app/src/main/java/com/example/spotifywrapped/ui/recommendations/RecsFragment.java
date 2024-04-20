@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -71,6 +72,14 @@ public class RecsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.recs_artists, container, false);
+
+        int background = R.drawable.green;
+
+        RelativeLayout layout = view.findViewById(R.id.content_container);
+
+        layout.setBackgroundResource(background);
+
+        view.findViewById(R.id.recs_home_button).setBackgroundResource(background);
 
         accessToken = getArguments().getString("access-token");
 

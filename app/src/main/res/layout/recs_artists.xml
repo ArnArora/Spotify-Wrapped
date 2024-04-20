@@ -455,11 +455,13 @@
 				</RelativeLayout>
 
 
-				<RelativeLayout android:id="@+id/home_button_svgrepo_com_1"
+				<RelativeLayout android:id="@+id/recs_home_button"
 					android:layout_marginTop="682dp"
 					android:layout_marginStart="175dp"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:layout_alignParentBottom="true"
+					android:paddingBottom="6dp"
 					>
 
 
